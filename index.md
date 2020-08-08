@@ -1,6 +1,6 @@
 # Weather Updates
 
-Tennis is on today. :)
+Tennis is not on today due to wet weather. 
 
 <a href="./questions.html">Questions</a>
 

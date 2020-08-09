@@ -1,9 +1,3 @@
----
-layout: post
-title: Pricing
----
-
-
 # Pricing
 
 ## Individual lessons:

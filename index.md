@@ -2,7 +2,8 @@
 
 Tennis is not on today due to wet weather. 
 
-<a href="./questions.md">Questions</a>
-<a href="./pricing.md">Pricing</a>
+[Questions](questions.md)
+
+[Pricing](pricing.md)
 
 ![Picture](./img/img.JPG)

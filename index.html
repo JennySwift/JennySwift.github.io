@@ -105,6 +105,21 @@
                         },
                         plugins: {
                             tooltip: {
+                                callbacks: {
+                                  title: (context) => {
+                                    const date = new Date(context[0].parsed.x);
+                                    return date.toLocaleTimeString([], {
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                      hour12: true
+                                    }); // e.g. "11:30 PM"
+                                  },
+                                  label: (context) => {
+                                    const mmol = context.parsed.y;
+                                    const mgdl = Math.round(mmol * 18);
+                                    return `BG: ${mmol.toFixed(1)} mmol/L (${mgdl} mg/dL)`;
+                                  }
+                                },
                                 titleFont: {
                                   size: 16
                                 },

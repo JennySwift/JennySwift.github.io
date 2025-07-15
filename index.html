@@ -37,38 +37,51 @@
   </div>
 
   <script>
-    const ctx = document.getElementById('bgChart').getContext('2d');
-    const chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['12am', '3am', '6am', '9am', '12pm', '3pm', '6pm', '9pm'],
-        datasets: [{
-          label: 'BG (mmol/L)',
-          data: [7.5, 6.8, 6.3, 7.0, 5.6, 4.9, 6.2, 7.1],
-          fill: true,
-          backgroundColor: 'rgba(255, 99, 132, 0.1)',
-          borderColor: 'rgb(255, 99, 132)',
-          tension: 0.3
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            min: 2,
-            max: 12,
-            title: {
-              display: true,
-              text: 'mmol/L'
+  fetch("https://www.dropbox.com/scl/fi/0udoq3x6gkchstkq2hqxg/Download-glucoseData.json?rlkey=vllvwb6wlx2el12c9aqijw37p&dl=1")
+    .then(response => response.json())
+    .then(data => {
+      const ctx = document.getElementById('bgChart').getContext('2d');
+      const readings = data.readings;
+
+      const labels = readings.map(r => {
+        const date = new Date(r.timestamp);
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      });
+
+      const values = readings.map(r => r.value);
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'BG (mmol/L)',
+            data: values,
+            fill: true,
+            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+            borderColor: 'rgb(255, 99, 132)',
+            tension: 0.3
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              min: 2,
+              max: 12,
+              title: {
+                display: true,
+                text: 'mmol/L'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
             }
           }
-        },
-        plugins: {
-          legend: {
-            display: false
-          }
         }
-      }
+      });
     });
-  </script>
+</script>
 </body>
 </html>

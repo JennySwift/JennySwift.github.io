@@ -28,6 +28,11 @@
     <body>
         <h1>Jenny's Blood Glucose Dashboard</h1>
         
+        <div style="margin-bottom: 1rem;">
+          <label for="selectedDate">Select date:</label>
+          <input type="date" id="selectedDate" />
+        </div>
+        
         <div style="margin-top: 1rem;">
           <label for="jumpInput">Jump to time:</label>
           <input type="text" id="jumpInput" placeholder="e.g. 2:30 PM" style="font-size: 1rem; padding: 4px;" />
@@ -48,6 +53,17 @@
             .then(data => {
                 const ctx = document.getElementById('bgChart').getContext('2d');
                 const readings = data.readings;
+                
+                console.log("📅 Raw timestamps in data:");
+                readings.slice(0, 5).forEach(r => console.log("→", r.timestamp));
+                
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                
+                
+                console.log("✅ Local today (midnight AEST):", today.toString());
+                const tomorrow = new Date(today);
+                tomorrow.setDate(today.getDate() + 1);
                 
                 const dataset = readings.map(r => ({
                     x: new Date(r.timestamp),
@@ -204,6 +220,8 @@
                     }
                 });
                 
+                updateChartForDate(today);
+                
                 function parseFlexibleTime(input) {
                   const clean = input.toLowerCase().replace(/\s+/g, '');
                   const match = clean.match(/^(\d{1,2})(?::(\d{2}))?(am|pm)?$/);
@@ -223,6 +241,36 @@
                   }
 
                   return null;
+                }
+                
+                function updateChartForDate(date) {
+                  const start = new Date(date);
+                  start.setHours(0, 0, 0, 0);
+                  const end = new Date(start);
+                  end.setDate(start.getDate() + 1);
+
+                  const filtered = readings
+                    .map(r => ({
+                      timestamp: new Date(r.timestamp),
+                      value: r.value
+                    }))
+                    .filter(r => r.timestamp >= start && r.timestamp < end);
+
+                  console.log("📅 Filtering for:", start.toDateString());
+                  console.log("🔢 Found readings:", filtered.length);
+
+                  const labels = filtered.map(r =>
+                    r.timestamp.toLocaleTimeString([], {
+                      hour: 'numeric',
+                      minute: '2-digit',
+                      hour12: true
+                    })
+                  );
+                  const values = filtered.map(r => r.value);
+
+                  chart.data.labels = labels;
+                  chart.data.datasets[0].data = values;
+                  chart.update();
                 }
                 
                 function jumpToTime() {

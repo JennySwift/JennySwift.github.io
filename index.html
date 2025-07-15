@@ -28,6 +28,11 @@
     <body>
         <h1>Jenny's Blood Glucose Dashboard</h1>
         
+        <div style="margin-top: 1rem;">
+          <label for="jumpInput">Jump to time:</label>
+          <input type="text" id="jumpInput" placeholder="e.g. 2:30 PM" style="font-size: 1rem; padding: 4px;" />
+        </div>
+        
         <div>
             <canvas id="bgChart"></canvas>
         </div>
@@ -197,6 +202,83 @@
                             }
                         }
                     }
+                });
+                
+                function parseFlexibleTime(input) {
+                  const clean = input.toLowerCase().replace(/\s+/g, '');
+                  const match = clean.match(/^(\d{1,2})(?::(\d{2}))?(am|pm)?$/);
+
+                  if (!match) return null;
+
+                  let hour = parseInt(match[1]);
+                  let minute = parseInt(match[2] || '0');
+                  const period = match[3];
+
+                  if (period === 'pm' && hour < 12) hour += 12;
+                  if (period === 'am' && hour === 12) hour = 0;
+                  if (hour >= 0 && hour < 24 && minute >= 0 && minute < 60) {
+                    const date = new Date();
+                    date.setHours(hour, minute, 0, 0);
+                    return date;
+                  }
+
+                  return null;
+                }
+                
+                function jumpToTime() {
+                  const input = document.getElementById('jumpInput').value.trim();
+                  if (!input) return;
+
+                  const parsed = parseFlexibleTime(input);
+                  if (!parsed) {
+                    alert("Couldn't understand that time. Try e.g. 2:30 PM or 14:00");
+                    return;
+                  }
+
+                  const labels = chart.data.labels;
+
+                  // Format the parsed time exactly how your labels are formatted
+                  const formattedTarget = parsed.toLocaleTimeString([], {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                  });
+
+                  let closestIndex = 0;
+                  let closestDiff = Infinity;
+
+                  for (let i = 0; i < labels.length; i++) {
+                    const label = labels[i];
+                    const labelDate = parseFlexibleTime(label);
+                    if (!labelDate) continue;
+
+                    const diff = Math.abs(labelDate.getTime() - parsed.getTime());
+                    if (diff < closestDiff) {
+                      closestDiff = diff;
+                      closestIndex = i;
+                    }
+                  }
+
+                  const matchedLabel = labels[closestIndex];
+
+                  // Update vertical line annotation
+                  chart.options.plugins.annotation.annotations.dynamicLine.value = matchedLabel;
+
+                  // Set tooltip + highlight point
+                  chart.setActiveElements([
+                    { datasetIndex: 0, index: closestIndex }
+                  ]);
+                  chart.tooltip.setActiveElements([
+                    { datasetIndex: 0, index: closestIndex }
+                  ], { x: 0, y: 0 });
+
+                  chart.update();
+                }
+                
+                document.getElementById('jumpInput').addEventListener('keydown', function (e) {
+                  if (e.key === 'Enter') {
+                    jumpToTime();
+                  }
                 });
                 
                 document.getElementById('bgChart').addEventListener('mousemove', function(evt) {

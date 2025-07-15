@@ -56,7 +56,7 @@
                 
                 const values = readings.map(r => r.value);
                 
-                new Chart(ctx, {
+                const chart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: labels,
@@ -173,11 +173,33 @@
                                         yMax: 20, // you can raise if you ever go higher
                                         backgroundColor: 'rgba(255, 0, 0, 0.4)', // red
                                         borderWidth: 0
+                                    },
+                                    dynamicLine: {
+                                      type: 'line',
+                                      scaleID: 'x',
+                                      value: null, // we'll update this dynamically
+                                      borderColor: 'blue',
+                                      borderWidth: 2,
+                                      label: {
+                                        display: false
+                                      }
                                     }
                                 }
                             }
                         }
                     }
+                });
+                
+                document.getElementById('bgChart').addEventListener('mousemove', function(evt) {
+                  const points = chart.getElementsAtEventForMode(evt, 'nearest', { intersect: false }, false);
+                  if (points.length > 0) {
+                    const index = points[0].index;
+                    const label = chart.data.labels[index];
+                    
+                    // Update the vertical line annotation
+                    chart.options.plugins.annotation.annotations.dynamicLine.value = label;
+                    chart.update('none');
+                  }
                 });
             });
         </script>

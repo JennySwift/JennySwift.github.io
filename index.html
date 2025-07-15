@@ -29,8 +29,9 @@
         <h1>Jenny's Blood Glucose Dashboard</h1>
         
         <div style="margin-bottom: 1rem;">
-          <label for="selectedDate">Select date:</label>
-          <input type="date" id="selectedDate" />
+            <button id="prevDate">⬅️</button>
+            <input type="date" id="selectedDate" />
+            <button id="nextDate">➡️</button>
         </div>
         
         <div style="margin-top: 1rem;">
@@ -327,6 +328,45 @@
                   if (e.key === 'Enter') {
                     jumpToTime();
                   }
+                });
+                
+                document.getElementById('selectedDate').addEventListener('change', function () {
+                  const selected = this.value; // Format: "YYYY-MM-DD"
+                  const [yyyy, mm, dd] = selected.split('-');
+                  const chosenDate = new Date(yyyy, mm - 1, dd);
+                  updateChartForDate(chosenDate);
+                });
+                
+                document.getElementById('prevDate').addEventListener('click', function () {
+                  const input = document.getElementById('selectedDate');
+                  let current = input.valueAsDate;
+
+                  if (!current) {
+                    console.warn("⚠️ prevDate: No date selected — defaulting to today");
+                    current = new Date();
+                    current.setHours(0, 0, 0, 0);
+                  }
+
+                  current.setDate(current.getDate() - 1);
+                  input.valueAsDate = current;
+                  console.log("⬅️ Navigated to:", current.toDateString());
+                  updateChartForDate(current);
+                });
+
+                document.getElementById('nextDate').addEventListener('click', function () {
+                  const input = document.getElementById('selectedDate');
+                  let current = input.valueAsDate;
+
+                  if (!current) {
+                    console.warn("⚠️ nextDate: No date selected — defaulting to today");
+                    current = new Date();
+                    current.setHours(0, 0, 0, 0);
+                  }
+
+                  current.setDate(current.getDate() + 1);
+                  input.valueAsDate = current;
+                  console.log("➡️ Navigated to:", current.toDateString());
+                  updateChartForDate(current);
                 });
                 
                 document.getElementById('bgChart').addEventListener('mousemove', function(evt) {

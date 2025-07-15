@@ -1,87 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jenny's BG Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 2rem;
-      background: #fffbe6;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    canvas {
-      max-width: 100%;
-      height: auto;
-    }
-    .section {
-      margin-top: 3rem;
-    }
-  </style>
-</head>
-<body>
-  <h1>Jenny's Blood Glucose Dashboard</h1>
-
-  <div>
-    <canvas id="bgChart"></canvas>
-  </div>
-
-  <div class="section">
-    <h2>Food Log + Notes (coming soon)</h2>
-    <p>This section will show food entries, exercise, and comments for the selected date.</p>
-  </div>
-
-  <script>
-  fetch("https://dl.dropboxusercontent.com/scl/fi/0udoq3x6gkchstkq2hqxg/glucoseData.json?rlkey=vllvwb6wlx2el12c9aqijw37p")
-    .then(response => response.json())
-    .then(data => {
-      const ctx = document.getElementById('bgChart').getContext('2d');
-      const readings = data.readings;
-
-      const labels = readings.map(r => {
-        const date = new Date(r.timestamp);
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      });
-
-      const values = readings.map(r => r.value);
-
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'BG (mmol/L)',
-            data: values,
-            fill: true,
-            backgroundColor: 'rgba(255, 99, 132, 0.1)',
-            borderColor: 'rgb(255, 99, 132)',
-            tension: 0.3
-          }]
-        },
-        options: {
-          scales: {
-            y: {
-              min: 2,
-              max: 12,
-              title: {
-                display: true,
-                text: 'mmol/L'
-              }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jenny's BG Dashboard</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            body {
+                font-family: sans-serif;
+                margin: 2rem;
+                background: #fffbe6;
             }
-          },
-          plugins: {
-            legend: {
-              display: false
+            h1 {
+                text-align: center;
+                margin-bottom: 2rem;
             }
-          }
-        }
-      });
-    });
-</script>
-</body>
+            canvas {
+                max-width: 100%;
+                height: auto;
+            }
+            .section {
+                margin-top: 3rem;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Jenny's Blood Glucose Dashboard</h1>
+        
+        <div>
+            <canvas id="bgChart"></canvas>
+        </div>
+        
+        <div class="section">
+            <h2>Food Log + Notes (coming soon)</h2>
+            <p>This section will show food entries, exercise, and comments for the selected date.</p>
+        </div>
+        
+        <script>
+            fetch("https://dl.dropboxusercontent.com/scl/fi/0udoq3x6gkchstkq2hqxg/glucoseData.json?rlkey=vllvwb6wlx2el12c9aqijw37p")
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('bgChart').getContext('2d');
+                const readings = data.readings;
+                
+                const labels = readings.map(r => {
+                    const date = new Date(r.timestamp);
+                    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                });
+                
+                const values = readings.map(r => r.value);
+                
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'BG (mmol/L)',
+                            data: values,
+                            fill: true,
+                            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                            borderColor: 'rgb(255, 99, 132)',
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                              min: 2,
+                              max: 12,
+                              ticks: {
+                                stepSize: 1
+                              },
+                              grid: {
+                                display: true,
+                                color: '#888',       // darker grey
+                                lineWidth: 1.5,
+                                drawTicks: true,
+                                drawBorder: true
+                              },
+                              title: {
+                                display: true,
+                                text: 'mmol/L'
+                              }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            });
+        </script>
+    </body>
 </html>

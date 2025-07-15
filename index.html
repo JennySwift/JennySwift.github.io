@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Jenny's BG Dashboard</title>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
         <style>
             body {
                 font-family: sans-serif;
@@ -104,6 +105,38 @@
                         plugins: {
                             legend: {
                                 display: false
+                            },
+                            annotation: {
+                                annotations: {
+                                    lowZone: {
+                                        type: 'box',
+                                        yMin: 0,
+                                        yMax: 4,
+                                        backgroundColor: 'rgba(255, 0, 0, 0.4)', // red
+                                        borderWidth: 0
+                                    },
+                                    inRangeZone: {
+                                        type: 'box',
+                                        yMin: 4,
+                                        yMax: 8,
+                                        backgroundColor: 'rgba(0, 255, 0, 0.4)', // green
+                                        borderWidth: 0
+                                    },
+                                    highYellowZone: {
+                                        type: 'box',
+                                        yMin: 8,
+                                        yMax: 10,
+                                        backgroundColor: 'rgba(255, 255, 0, 0.4)', // yellow
+                                        borderWidth: 0
+                                    },
+                                    veryHighZone: {
+                                        type: 'box',
+                                        yMin: 10,
+                                        yMax: 20, // you can raise if you ever go higher
+                                        backgroundColor: 'rgba(255, 0, 0, 0.4)', // red
+                                        borderWidth: 0
+                                    }
+                                }
                             }
                         }
                     }

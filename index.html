@@ -43,6 +43,11 @@
                 const ctx = document.getElementById('bgChart').getContext('2d');
                 const readings = data.readings;
                 
+                const dataset = readings.map(r => ({
+                    x: new Date(r.timestamp),
+                    y: r.value
+                }));
+                
                 const labels = readings.map(r => {
                     const date = new Date(r.timestamp);
                     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -66,23 +71,35 @@
                     options: {
                         scales: {
                             y: {
-                              min: 2,
-                              max: 12,
-                              ticks: {
-                                stepSize: 1
-                              },
-                              grid: {
-                                display: true,
-                                color: '#888',       // darker grey
-                                lineWidth: 1.5,
-                                drawTicks: true,
-                                drawBorder: true
-                              },
-                              title: {
-                                display: true,
-                                text: 'mmol/L'
-                              }
-                            }
+                                min: 2,
+                                max: 12,
+                                ticks: {
+                                    stepSize: 1
+                                },
+                                grid: {
+                                    display: true,
+                                    color: '#888',       // darker grey
+                                    lineWidth: 1.5,
+                                    drawTicks: true,
+                                    drawBorder: true
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'mmol/L'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    autoSkip: true,
+                                    maxTicksLimit: 48,
+                                    maxRotation: 0,
+                                    minRotation: 0
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Time'
+                                }
+                            },
                         },
                         plugins: {
                             legend: {

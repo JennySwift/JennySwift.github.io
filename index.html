@@ -5,16 +5,17 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Jenny's BG Dashboard</title>
       <link rel="stylesheet" href="style.css" />
+      <link rel="stylesheet" href="dateNavigation.css" />
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
     </head>
     <body>
         <h1>Jenny's Blood Glucose Dashboard</h1>
         
-        <div style="margin-bottom: 1rem;">
-            <button id="prevDate">⬅️</button>
-            <input type="date" id="selectedDate" />
-            <button id="nextDate">➡️</button>
+        <div id="dateNavContainer">
+          <button id="prevDate">⬅️ Previous</button>
+          <input type="date" id="selectedDate" />
+          <button id="nextDate">➡️ Next</button>
         </div>
         
         <div style="margin-top: 1rem;">
@@ -34,5 +35,6 @@
         
         <script src="helpers.js"></script>
         <script src="chartLogic.js"></script>
+        <script src="dateNavigation.js"></script>
     </body>
 </html>

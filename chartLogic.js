@@ -20,9 +20,13 @@ document.addEventListener("DOMContentLoaded", () => {
         value: r.value,
       }));
 
-      const now = new Date();
-      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      selectedDateInput.valueAsDate = today;
+        
+        const now = new Date();
+        const today = new Date(now);
+        today.setHours(0, 0, 0, 0);
+        selectedDateInput.value = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+          .toISOString()
+          .split("T")[0];
 
       chart = createChart(ctx);
       updateChartForDate(today);
@@ -53,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const selected = document.getElementById("selectedDate");
       const date = selected.valueAsDate;
       date.setDate(date.getDate() - 1);
-      selected.valueAsDate = date;               // update visible input
+        selected.value = date.toISOString().split("T")[0];
       updateChartForDate(date);                  // manually trigger graph update
     });
 
@@ -61,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const selected = document.getElementById("selectedDate");
       const date = selected.valueAsDate;
       date.setDate(date.getDate() + 1);
-      selected.valueAsDate = date;
+        selected.value = date.toISOString().split("T")[0];
       updateChartForDate(date);
     });
 });
@@ -178,10 +182,20 @@ function createChart(ctx) {
 }
 
 function updateChartForDate(date) {
+    console.log("🛠 updateChartForDate called with:", date.toString());
+    console.log("📅 input field currently shows:", document.getElementById("selectedDate").value);
   const start = new Date(date);
   start.setHours(0, 0, 0, 0);
   const end = new Date(start);
   end.setDate(end.getDate() + 1);
+    
+    const heading = document.getElementById("dateHeading");
+    heading.textContent = start.toLocaleDateString("en-AU", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
 
   const filtered = readings.filter(r => r.timestamp >= start && r.timestamp < end);
   console.log("📅 Filtering for:", start.toDateString());

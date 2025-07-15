@@ -115,10 +115,13 @@
                                     }); // e.g. "11:30 PM"
                                   },
                                   label: (context) => {
-                                        const mmol = context.parsed.y;
-                                        const mgdl = Math.round(mmol * 18);
-                                        return `🩸 ${mmol.toFixed(1)} mmol/L (${mgdl} mg/dL)`;
-                                      }
+                                    const mmol = context.parsed.y;
+                                    const mgdl = Math.round(mmol * 18);
+                                    return [
+                                      `🩸 ${mmol.toFixed(1)} mmol/L`,
+                                      `🩸 ${mgdl} mg/dL`
+                                    ];
+                                  }
                                 },
                                 titleFont: {
                                   size: 18

@@ -1,11 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Jenny's Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jenny's BG Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2rem;
+      background: #fffbe6;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    canvas {
+      max-width: 100%;
+      height: auto;
+    }
+    .section {
+      margin-top: 3rem;
+    }
+  </style>
 </head>
 <body>
-  <h1>Hello from Jenny's GitHub Page!</h1>
-  <p>If you see this, your dashboard is working. 🎉</p>
+  <h1>Jenny's Blood Glucose Dashboard</h1>
+
+  <div>
+    <canvas id="bgChart"></canvas>
+  </div>
+
+  <div class="section">
+    <h2>Food Log + Notes (coming soon)</h2>
+    <p>This section will show food entries, exercise, and comments for the selected date.</p>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('bgChart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['12am', '3am', '6am', '9am', '12pm', '3pm', '6pm', '9pm'],
+        datasets: [{
+          label: 'BG (mmol/L)',
+          data: [7.5, 6.8, 6.3, 7.0, 5.6, 4.9, 6.2, 7.1],
+          fill: true,
+          backgroundColor: 'rgba(255, 99, 132, 0.1)',
+          borderColor: 'rgb(255, 99, 132)',
+          tension: 0.3
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            min: 2,
+            max: 12,
+            title: {
+              display: true,
+              text: 'mmol/L'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+  </script>
 </body>
 </html>

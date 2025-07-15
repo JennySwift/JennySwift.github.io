@@ -209,6 +209,12 @@ function updateChartForDate(date) {
     })
   );
   const values = filtered.map(r => r.value);
+    
+    // Automatically scale y-axis to fit data
+    //Always show at least up to 10 but higher if needed
+    chart.options.scales.y.max = Math.max(10, Math.ceil(Math.max(...values)));
+    //Always show at least down to 4 but lower if BG is lower than 4
+    chart.options.scales.y.min = Math.min(4, Math.floor(Math.min(...values)));
 
   chart.data.labels = labels;
   chart.data.datasets[0].data = values;

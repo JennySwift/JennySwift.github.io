@@ -115,13 +115,13 @@
                                     }); // e.g. "11:30 PM"
                                   },
                                   label: (context) => {
-                                    const mmol = context.parsed.y;
-                                    const mgdl = Math.round(mmol * 18);
-                                    return `BG: ${mmol.toFixed(1)} mmol/L (${mgdl} mg/dL)`;
-                                  }
+                                        const mmol = context.parsed.y;
+                                        const mgdl = Math.round(mmol * 18);
+                                        return `🩸 ${mmol.toFixed(1)} mmol/L (${mgdl} mg/dL)`;
+                                      }
                                 },
                                 titleFont: {
-                                  size: 16
+                                  size: 18
                                 },
                                 bodyFont: {
                                   size: 18
@@ -129,7 +129,14 @@
                                 footerFont: {
                                   size: 14
                                 },
-                                padding: 12
+                                padding: 14,
+                                usePointStyle: true,
+                                labelPointStyle: {
+                                  pointStyle: 'circle', // default fallback
+                                  rotation: 0
+                                },
+                                //Removes the little white circle in the tooltip
+                                displayColors: false
                               },
                             legend: {
                                 display: false

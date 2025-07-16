@@ -128,6 +128,12 @@ function createChart(ctx) {
                         maxRotation: 0,
                         minRotation: 0,
                     },
+                    grid: {
+                        display: true,
+                        drawTicks: true,
+                        color: "#ccc",         // light grey grid line
+                        lineWidth: 1.2,        // slightly thicker for clarity
+                    },
                     title: { display: true, text: "Time" },
                 },
             },
@@ -277,7 +283,7 @@ function updateChartForDate(date) {
     chart.data.labels = labels;
     chart.data.datasets[0].data = values;
     //Specify how many time labels to show below the chart
-    chart.options.scales.x.ticks.maxTicksLimit = 6;
+    chart.options.scales.x.ticks.maxTicksLimit = 8;
     chart.update();
     
     

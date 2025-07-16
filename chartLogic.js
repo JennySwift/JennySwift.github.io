@@ -67,6 +67,8 @@ function createChart(ctx) {
                 borderColor: "black",
                 borderWidth: 2.5,
                 tension: 0.3,
+                //Don't show the circles for the points
+                pointRadius: 0
             }],
         },
         options: {

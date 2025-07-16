@@ -37,6 +37,16 @@ document.addEventListener("DOMContentLoaded", () => {
         updateChartForDate(selected);
     });
     
+    // Hide tooltip + vertical line when tapping outside chart on iPhone
+    document.addEventListener("touchstart", (e) => {
+      const chartEl = document.getElementById("bgChart");
+      if (!chartEl.contains(e.target)) {
+        chart.setActiveElements([]);
+        chart.options.plugins.annotation.annotations.dynamicLine.value = null;
+        chart.update();
+      }
+    });
+    
     document.getElementById("jumpInput").addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
             jumpToTime();

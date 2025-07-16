@@ -100,6 +100,13 @@ function createChart(ctx) {
                   chart.update();
                 }
               },
+            resizeDelay: 0,
+            onResize: () => {
+              if (chart && chart.scales?.y) {
+                updateAnnotationZonesFromYScale();
+                chart.update();
+              }
+            },
             scales: {
                 y: {
                     min: 2,

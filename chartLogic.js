@@ -163,16 +163,42 @@ function updateChartForDate(date) {
     
 //    updateAnnotationZonesFromYMax(newYMax);
     
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+
+    dummyNotes = [
+        {
+            timestamp: new Date(yesterday.getTime() + 9 * 60 * 60 * 1000), // 9:00 AM
+            text: "Breakfast: oats + berries",
+            tags: ["#food"]
+        },
+        {
+            timestamp: new Date(yesterday.getTime() + 14 * 60 * 60 * 1000), // 2:00 PM
+            text: "Walked for 40 minutes",
+            tags: ["#exercise"]
+        },
+        {
+            timestamp: new Date(yesterday.getTime() + 20 * 60 * 60 * 1000), // 8:00 PM
+            text: "Felt tired, BG 3.9",
+            tags: ["#symptom", "#low"]
+        }
+    ];
     
     const noteDataset = {
         label: "Notes",
-        data: notes
-        .filter(n => n.timestamp >= start && n.timestamp < end)
-        .map(note => ({
+        data: dummyNotes.map(note => ({
             x: note.timestamp,
             y: chart.options.scales.y.min + 0.5,
             text: note.text
-        })),
+          })),
+//        data: notes
+//        .filter(n => n.timestamp >= start && n.timestamp < end)
+//        .map(note => ({
+//            x: note.timestamp,
+//            y: chart.options.scales.y.min + 0.5,
+//            text: note.text
+//        })),
         backgroundColor: "blue",
         borderColor: "blue",
         pointRadius: 6,

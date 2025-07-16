@@ -17,12 +17,12 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch("https://dl.dropboxusercontent.com/scl/fi/0udoq3x6gkchstkq2hqxg/glucoseData.json?rlkey=vllvwb6wlx2el12c9aqijw37p")
     .then((response) => response.json())
     .then((data) => {
-//        console.log("📦 Raw data from JSON:", data);
+        //        console.log("📦 Raw data from JSON:", data);
         glucoseReadings = data.glucoseReadings.map((r) => ({
             timestamp: new Date(r.timestamp),
             value: r.value,
         }));
-
+        
         foodLogs = data.foodLogs?.map((f) => ({
             timestamp: new Date(f.timestamp),
             foodName: f.foodName,
@@ -30,23 +30,24 @@ document.addEventListener("DOMContentLoaded", () => {
             calories: f.calories,
             fat: f.fat,
         })) || [];
-
+        
         notes = data.notes?.map((n) => ({
             timestamp: new Date(n.startTime),
             text: n.text,
             tags: n.tags || [],
         })) || [];
-
-        console.log("✅ Food Logs:", foodLogs);
-        console.log("✅ Notes:", notes);
-
+        
+//        console.log("✅ Food Logs:", foodLogs);
+//        console.log("✅ Notes:", notes);
+//        
         const now = new Date();
         const today = new Date(now);
         today.setHours(0, 0, 0, 0);
         selectedDateInput.value = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
-            .toISOString()
-            .split("T")[0];
-
+        .toISOString()
+        .split("T")[0];
+//
+//        testBasicTimeChart(ctx);
         chart = createChart(ctx);
         updateChartForDate(today);
     });
@@ -58,12 +59,12 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Hide tooltip + vertical line when tapping outside chart on iPhone
     document.addEventListener("touchstart", (e) => {
-      const chartEl = document.getElementById("bgChart");
-      if (!chartEl.contains(e.target)) {
-        chart.setActiveElements([]);
-        chart.options.plugins.annotation.annotations.dynamicLine.value = null;
-        chart.update();
-      }
+        const chartEl = document.getElementById("bgChart");
+        if (!chartEl.contains(e.target)) {
+            chart.setActiveElements([]);
+            chart.options.plugins.annotation.annotations.dynamicLine.value = null;
+            chart.update();
+        }
     });
     
     document.getElementById("jumpInput").addEventListener("keydown", (e) => {
@@ -72,21 +73,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     
-//    Hide the vertical line when mouse leaves chart
-    document.getElementById("bgChart").addEventListener("mouseleave", () => {
-        chart.options.plugins.annotation.annotations.dynamicLine.value = null;
-        chart.update("none");
-    });
+    //    Hide the vertical line when mouse leaves chart
+//    document.getElementById("bgChart").addEventListener("mouseleave", () => {
+//        chart.options.plugins.annotation.annotations.dynamicLine.value = null;
+//        chart.update("none");
+//    });
     
-    document.getElementById("bgChart").addEventListener("mousemove", (evt) => {
-        const points = chart.getElementsAtEventForMode(evt, "nearest", { intersect: false }, false);
-        if (points.length > 0) {
-            const index = points[0].index;
-            const label = chart.data.labels[index];
-            chart.options.plugins.annotation.annotations.dynamicLine.value = label;
-            chart.update("none");
-        }
-    });
+//    document.getElementById("bgChart").addEventListener("mousemove", (evt) => {
+//        const points = chart.getElementsAtEventForMode(evt, "nearest", { intersect: false }, false);
+//        if (points.length > 0) {
+//            const index = points[0].index;
+//            const label = chart.data.labels[index];
+//            chart.options.plugins.annotation.annotations.dynamicLine.value = label;
+//            chart.update("none");
+//        }
+//    });
 });
 
 
@@ -94,18 +95,18 @@ document.addEventListener("DOMContentLoaded", () => {
 function updateAnnotationZonesFromYScale() {
     const yScale = chart.scales.y;
     if (!yScale) return;
-
+    
     const annotations = chart.options.plugins.annotation.annotations;
-
+    
     annotations.lowZone.yMin = yScale.min;
     annotations.lowZone.yMax = 4;
-
+    
     annotations.inRangeZone.yMin = 4;
     annotations.inRangeZone.yMax = 8;
-
+    
     annotations.highYellowZone.yMin = 8;
     annotations.highYellowZone.yMax = 10;
-
+    
     annotations.veryHighZone.yMin = 10;
     annotations.veryHighZone.yMax = yScale.max;
 }
@@ -123,14 +124,14 @@ function updateAnnotationZonesFromYMax(yMax) {
 }
 
 function updateChartForDate(date) {
-    console.log("🛠 updateChartForDate called with:", date.toString());
-    console.log("📅 input field currently shows:", document.getElementById("selectedDate").value);
+//    console.log("🛠 updateChartForDate called with:", date.toString());
+//    console.log("📅 input field currently shows:", document.getElementById("selectedDate").value);
     const start = new Date(date);
     start.setHours(0, 0, 0, 0);
     
     //If I want the graph to not go till the end of today
-//    const end = new Date(start);
-//    end.setDate(end.getDate() + 1);
+    //    const end = new Date(start);
+    //    end.setDate(end.getDate() + 1);
     //If I want it to go till the end of today
     const end = new Date(); // use current time instead of fixed end-of-day
     
@@ -143,39 +144,45 @@ function updateChartForDate(date) {
     });
     
     const filtered = glucoseReadings.filter(r => r.timestamp >= start && r.timestamp < end);
-    console.log("📅 Filtering for:", start.toDateString());
-    console.log("🔢 Found glucose readings:", filtered.length);
+//    console.log("📅 Filtering for:", start.toDateString());
+//    console.log("🔢 Found glucose readings:", filtered.length);
     
-    const labels = filtered.map(r =>
-                                r.timestamp.toLocaleTimeString([], {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-    })
-                                );
-    const values = filtered.map(r => r.value);
-    logChartLabelsAndValues(labels, values);
+//    const labels = filtered.map(r =>
+//                                r.timestamp.toLocaleTimeString([], {
+//        hour: "numeric",
+//        minute: "2-digit",
+//        hour12: true,
+//    })
+//                                );
+//    const glucoseValues = filtered.map(r => r.value);
+    
+    const bgXYValues = filtered.map(r => ({
+        x: r.timestamp,
+        y: r.value,
+    }));
+//    
+//    logChartLabelsAndValues(labels, values);
     
     // Automatically scale y-axis to fit data
     //Always show at least up to 10 but higher if needed
-    const newYMax = Math.max(10, Math.ceil(Math.max(...values)));
-    chart.options.scales.y.max = newYMax;
-//    chart.options.scales.y.max = Math.max(10, Math.ceil(Math.max(...values)));
+//    const newYMax = Math.max(10, Math.ceil(Math.max(...values)));
+//    chart.options.scales.y.max = newYMax;
+    //    chart.options.scales.y.max = Math.max(10, Math.ceil(Math.max(...values)));
     //Always show at least down to 4 but lower if BG is lower than 4
-    chart.options.scales.y.min = Math.min(4, Math.floor(Math.min(...values)));
-        
-    updateAnnotationZonesFromYMax(newYMax);
+//    chart.options.scales.y.min = Math.min(4, Math.floor(Math.min(...values)));
+    
+//    updateAnnotationZonesFromYMax(newYMax);
     
     
     const noteDataset = {
         label: "Notes",
         data: notes
-            .filter(n => n.timestamp >= start && n.timestamp < end)
-            .map(note => ({
-                x: note.timestamp,
-                y: chart.options.scales.y.min + 0.5,
-                text: note.text
-            })),
+        .filter(n => n.timestamp >= start && n.timestamp < end)
+        .map(note => ({
+            x: note.timestamp,
+            y: chart.options.scales.y.min + 0.5,
+            text: note.text
+        })),
         backgroundColor: "blue",
         borderColor: "blue",
         pointRadius: 6,
@@ -186,35 +193,45 @@ function updateChartForDate(date) {
     
     
     
-    chart.data.labels = labels;
-//    chart.data.datasets[0].data = values;
+    //    chart.data.labels = labels;
+    //    chart.data.datasets[0].data = values;
     
-    chart.data.datasets = [
-        {
-            label: "Blood Glucose",
-            data: values,
-            fill: false,
-            borderColor: "red",
-            tension: 0.1
-        },
-        noteDataset
+    
+    const now = new Date();
+    const data = [
+        { x: new Date(now.getTime() - 3 * 60 * 60 * 1000), y: 5.5 },
+        { x: new Date(now.getTime() - 2 * 60 * 60 * 1000), y: 6.2 },
+        { x: new Date(now.getTime() - 1 * 60 * 60 * 1000), y: 7.0 },
+        { x: now, y: 6.7 },
     ];
+    chart.data.datasets[0].data = bgXYValues;
+    
+//    chart.data.datasets = [
+//        {
+//            label: "Blood Glucose",
+//            data: bgPoints,
+//            fill: false,
+//            borderColor: "red",
+//            tension: 0.1
+//        },
+//        noteDataset
+//    ];
     
     
     
     //Specify how many time labels to show below the chart
-    chart.options.scales.x.ticks.maxTicksLimit = 8;
+//    chart.options.scales.x.ticks.maxTicksLimit = 8;
     chart.update();
     
     
-//    highlightIfToday(date);
-//    updateForwardButtonState(date);
+    //    highlightIfToday(date);
+    //    updateForwardButtonState(date);
 }
 
 function logChartLabelsAndValues(labels, values) {
     console.log("📈 Chart data points for selected date:");
     for (let i = 0; i < labels.length; i++) {
-//        console.log(`→ ${labels[i]} = ${values[i]}`);
+        //        console.log(`→ ${labels[i]} = ${values[i]}`);
     }
 }
 

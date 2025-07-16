@@ -15,19 +15,36 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch("https://dl.dropboxusercontent.com/scl/fi/0udoq3x6gkchstkq2hqxg/glucoseData.json?rlkey=vllvwb6wlx2el12c9aqijw37p")
     .then((response) => response.json())
     .then((data) => {
-        readings = data.readings.map((r) => ({
+//        console.log("📦 Raw data from JSON:", data);
+        readings = data.glucoseReadings.map((r) => ({
             timestamp: new Date(r.timestamp),
             value: r.value,
         }));
-        
-        
+
+        foodLogs = data.foodLogs?.map((f) => ({
+            timestamp: new Date(f.timestamp),
+            foodName: f.foodName,
+            netCarbs: f.netCarbs,
+            calories: f.calories,
+            fat: f.fat,
+        })) || [];
+
+        notes = data.notes?.map((n) => ({
+            timestamp: new Date(n.timestamp),
+            note: n.note,
+            tags: n.tags || [],
+        })) || [];
+
+        console.log("✅ Food Logs:", foodLogs);
+        console.log("✅ Notes:", notes);
+
         const now = new Date();
         const today = new Date(now);
         today.setHours(0, 0, 0, 0);
         selectedDateInput.value = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
-        .toISOString()
-        .split("T")[0];
-        
+            .toISOString()
+            .split("T")[0];
+
         chart = createChart(ctx);
         updateChartForDate(today);
     });

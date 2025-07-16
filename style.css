@@ -17,6 +17,10 @@ h1 {
   width: 100%;
 }
 
+#bgChart {
+  touch-action: none; /* Prevent scroll and gestures while interacting */
+}
+
 #controls, #jump {
   margin-bottom: 1rem;
 }

@@ -10,7 +10,7 @@
       <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
     </head>
     <body>
-        <h1>Jenny's Blood Glucose Dashboard</h1>
+        <h1 id="dateHeading" style="text-align: center; font-size: 1.8rem; margin-top: 2rem;"></h1>
         
         <div id="dateNavContainer">
           <button id="prevDate">⬅️ Previous</button>
@@ -18,15 +18,19 @@
           <button id="nextDate">➡️ Next</button>
         </div>
         
-        <div style="margin-top: 1rem;">
-          <label for="jumpInput">Jump to time:</label>
-          <input type="text" id="jumpInput" placeholder="e.g. 2:30 PM" style="font-size: 1rem; padding: 4px;" />
-        </div>
-        
         <div>
-            <h2 id="dateHeading" style="text-align: center; font-size: 1.8rem; margin-top: 2rem;"></h2>
+            
+            <div class="jump-container">
+              <div class="jump-inner">
+                <label for="jumpInput">Jump to Time</label>
+                <input type="text" id="jumpInput" placeholder="e.g. 2:30 PM" />
+              </div>
+            </div>
+            
             <canvas id="bgChart"></canvas>
         </div>
+        
+       
         
         <div class="section">
             <h2>Food Log + Notes (coming soon)</h2>

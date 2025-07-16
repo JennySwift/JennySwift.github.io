@@ -62,7 +62,7 @@ function createChart(ctx) {
             datasets: [{
                 label: "BG (mmol/L)",
                 data: [],
-                fill: true,
+                fill: false,
                 backgroundColor: "rgba(255, 99, 132, 0.1)",
                 borderColor: "black",
                 borderWidth: 2.5,

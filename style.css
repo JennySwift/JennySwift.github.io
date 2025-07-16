@@ -18,7 +18,29 @@ canvas {
   margin-bottom: 1rem;
 }
 
-#jump input {
+.jump-container {
+  display: flex;
+  justify-content: center; 
+  margin-top: 0.5rem;
+  margin-bottom: 1.2rem;
+}
+
+.jump-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.jump-inner label {
   font-size: 1rem;
-  padding: 4px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.jump-inner input {
+  font-size: 1.1rem;
+  padding: 8px 12px;
+  width: 180px;
+  border: 1px solid #aaa;
+  border-radius: 6px;
 }

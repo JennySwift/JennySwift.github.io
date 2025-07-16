@@ -32,8 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
         })) || [];
 
         notes = data.notes?.map((n) => ({
-            timestamp: new Date(n.timestamp),
-            note: n.note,
+            timestamp: new Date(n.startTime),
+            text: n.text,
             tags: n.tags || [],
         })) || [];
 
@@ -127,8 +127,12 @@ function updateChartForDate(date) {
     console.log("📅 input field currently shows:", document.getElementById("selectedDate").value);
     const start = new Date(date);
     start.setHours(0, 0, 0, 0);
-    const end = new Date(start);
-    end.setDate(end.getDate() + 1);
+    
+    //If I want the graph to not go till the end of today
+//    const end = new Date(start);
+//    end.setDate(end.getDate() + 1);
+    //If I want it to go till the end of today
+    const end = new Date(); // use current time instead of fixed end-of-day
     
     const heading = document.getElementById("dateHeading");
     heading.textContent = start.toLocaleDateString("en-AU", {
@@ -162,8 +166,42 @@ function updateChartForDate(date) {
         
     updateAnnotationZonesFromYMax(newYMax);
     
+    
+    const noteDataset = {
+        label: "Notes",
+        data: notes
+            .filter(n => n.timestamp >= start && n.timestamp < end)
+            .map(note => ({
+                x: note.timestamp,
+                y: chart.options.scales.y.min + 0.5,
+                text: note.text
+            })),
+        backgroundColor: "blue",
+        borderColor: "blue",
+        pointRadius: 6,
+        pointStyle: "rectRot",
+        showLine: false,
+    };
+    
+    
+    
+    
     chart.data.labels = labels;
-    chart.data.datasets[0].data = values;
+//    chart.data.datasets[0].data = values;
+    
+    chart.data.datasets = [
+        {
+            label: "Blood Glucose",
+            data: values,
+            fill: false,
+            borderColor: "red",
+            tension: 0.1
+        },
+        noteDataset
+    ];
+    
+    
+    
     //Specify how many time labels to show below the chart
     chart.options.scales.x.ticks.maxTicksLimit = 8;
     chart.update();
@@ -176,7 +214,7 @@ function updateChartForDate(date) {
 function logChartLabelsAndValues(labels, values) {
     console.log("📈 Chart data points for selected date:");
     for (let i = 0; i < labels.length; i++) {
-        console.log(`→ ${labels[i]} = ${values[i]}`);
+//        console.log(`→ ${labels[i]} = ${values[i]}`);
     }
 }
 

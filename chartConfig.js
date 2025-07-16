@@ -115,10 +115,27 @@ function getChartOptions(borderWidth) {
                 callbacks: {
                     title: (context) => context[0].label,
                     label: (context) => {
+                        const dataset = context.dataset;
+
+                        // Check if it's a note point
+                        if (dataset.label === "Notes") {
+                            const text = dataset.data[context.dataIndex].text;
+                            return `📝 ${text}`;
+                        }
+
+                        // Default for BG readings
                         const mmol = context.parsed.y;
                         const mgdl = Math.round(mmol * 18);
                         return [`🩸 ${mmol.toFixed(1)} mmol/L`, `🩸 ${mgdl} mg/dL`];
                     },
+                    
+                    
+                    
+//                    label: (context) => {
+//                        const mmol = context.parsed.y;
+//                        const mgdl = Math.round(mmol * 18);
+//                        return [`🩸 ${mmol.toFixed(1)} mmol/L`, `🩸 ${mgdl} mg/dL`];
+//                    },
                 },
                 titleFont: { size: 18 },
                 bodyFont: { size: 18 },

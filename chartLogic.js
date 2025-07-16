@@ -72,6 +72,7 @@ function createChart(ctx) {
             }],
         },
         options: {
+            maintainAspectRatio: true,
             interaction: {
                 mode: "nearest",
                 intersect: false,

@@ -9,9 +9,12 @@ h1 {
   margin-bottom: 2rem;
 }
 
-canvas {
-  max-width: 100%;
-  height: auto;
+#chartContainer {
+  display: flex;
+  justify-content: center;   /* Center horizontally */
+  align-items: center;       /* Center vertically if needed */
+  height: 400px;
+  width: 100%;
 }
 
 #controls, #jump {

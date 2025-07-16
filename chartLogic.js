@@ -73,10 +73,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     
     //    Hide the vertical line when mouse leaves chart
-    //    document.getElementById("bgChart").addEventListener("mouseleave", () => {
-    //        chart.options.plugins.annotation.annotations.dynamicLine.value = null;
-    //        chart.update("none");
-    //    });
+        document.getElementById("bgChart").addEventListener("mouseleave", () => {
+            chart.options.plugins.annotation.annotations.dynamicLine.value = null;
+            chart.update("none");
+        });
     
     document.getElementById("bgChart").addEventListener("mousemove", (evt) => {
         const points = chart.getElementsAtEventForMode(evt, "nearest", { intersect: false }, false);
@@ -146,15 +146,6 @@ function updateChartForDate(date) {
 //    console.log("📅 Filtering for:", start.toDateString());
 //    console.log("🔢 Found glucose readings:", filtered.length);
     
-//    const labels = filtered.map(r =>
-//                                r.timestamp.toLocaleTimeString([], {
-//        hour: "numeric",
-//        minute: "2-digit",
-//        hour12: true,
-//    })
-//                                );
-//    const glucoseValues = filtered.map(r => r.value);
-    
     const bgXYValues = filtered.map(r => ({
         x: r.timestamp,
         y: r.value,
@@ -162,13 +153,13 @@ function updateChartForDate(date) {
 //    
 //    logChartLabelsAndValues(labels, values);
     
+    const glucoseValues = filtered.map(r => r.value);
+    
     // Automatically scale y-axis to fit data
     //Always show at least up to 10 but higher if needed
-//    const newYMax = Math.max(10, Math.ceil(Math.max(...values)));
-//    chart.options.scales.y.max = newYMax;
-    //    chart.options.scales.y.max = Math.max(10, Math.ceil(Math.max(...values)));
+        chart.options.scales.y.max = Math.max(10, Math.ceil(Math.max(...glucoseValues)));
     //Always show at least down to 4 but lower if BG is lower than 4
-//    chart.options.scales.y.min = Math.min(4, Math.floor(Math.min(...values)));
+    chart.options.scales.y.min = Math.min(4, Math.floor(Math.min(...glucoseValues)));
     
 //    updateAnnotationZonesFromYMax(newYMax);
     
@@ -188,43 +179,23 @@ function updateChartForDate(date) {
         pointStyle: "rectRot",
         showLine: false,
     };
-    
-    
-    
-    
-    //    chart.data.labels = labels;
-    //    chart.data.datasets[0].data = values;
-    
-    
-    const now = new Date();
-    const data = [
-        { x: new Date(now.getTime() - 3 * 60 * 60 * 1000), y: 5.5 },
-        { x: new Date(now.getTime() - 2 * 60 * 60 * 1000), y: 6.2 },
-        { x: new Date(now.getTime() - 1 * 60 * 60 * 1000), y: 7.0 },
-        { x: now, y: 6.7 },
+        
+    chart.data.datasets = [
+        {
+            label: "Blood Glucose",
+            data: bgXYValues,
+            fill: false,
+            borderColor: "red",
+            tension: 0.1
+        },
+        noteDataset
     ];
-    chart.data.datasets[0].data = bgXYValues;
-    
-//    chart.data.datasets = [
-//        {
-//            label: "Blood Glucose",
-//            data: bgPoints,
-//            fill: false,
-//            borderColor: "red",
-//            tension: 0.1
-//        },
-//        noteDataset
-//    ];
     
     
     
     //Specify how many time labels to show below the chart
 //    chart.options.scales.x.ticks.maxTicksLimit = 8;
     chart.update();
-    
-    
-    //    highlightIfToday(date);
-    //    updateForwardButtonState(date);
 }
 
 function logChartLabelsAndValues(labels, values) {

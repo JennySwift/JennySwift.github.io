@@ -114,13 +114,18 @@ function getChartOptions(borderWidth) {
             tooltip: {
                 callbacks: {
                     title: (context) => context[0].label,
+                    
+                    
                     label: (context) => {
                         const dataset = context.dataset;
 
                         // Check if it's a note point
                         if (dataset.label === "Notes") {
-                            const text = dataset.data[context.dataIndex].text;
+                            const point = context.raw;
+                            const text = point?.text ?? "(no text)";
                             return `📝 ${text}`;
+                            
+                            
                         }
 
                         // Default for BG readings

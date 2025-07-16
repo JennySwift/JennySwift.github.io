@@ -71,6 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function createChart(ctx) {
+    let borderWidth = 2;
     return new Chart(ctx, {
         type: "line",
         data: {
@@ -93,6 +94,12 @@ function createChart(ctx) {
                 mode: "nearest",
                 intersect: false,
             },
+            animation: {
+                onComplete: () => {
+                  updateAnnotationZonesFromYScale();
+                  chart.update();
+                }
+              },
             scales: {
                 y: {
                     min: 2,
@@ -146,28 +153,32 @@ function createChart(ctx) {
                             yMin: 0,
                             yMax: 4,
                             backgroundColor: "rgba(255, 0, 0, 0.4)",
-                            borderWidth: 0,
+                          borderWidth: borderWidth,
+                          borderColor: "rgba(0,0,0,0.4)",
                         },
                         inRangeZone: {
                             type: "box",
                             yMin: 4,
                             yMax: 8,
                             backgroundColor: "rgba(0, 255, 0, 0.4)",
-                            borderWidth: 0,
+                                  borderWidth: borderWidth,
+                                  borderColor: "rgba(0,0,0,0.4)",
                         },
                         highYellowZone: {
                             type: "box",
                             yMin: 8,
                             yMax: 10,
-                            backgroundColor: "rgba(255, 255, 0, 0.4)",
-                            borderWidth: 0,
+                            backgroundColor: "rgba(255, 0, 255, 0.6)",
+                                  borderWidth: borderWidth,
+                                  borderColor: "rgba(0,0,0,0.4)",
                         },
                         veryHighZone: {
                             type: "box",
                             yMin: 10,
                             yMax: 20,
                             backgroundColor: "rgba(255, 0, 0, 0.4)",
-                            borderWidth: 0,
+                                  borderWidth: borderWidth,
+                                  borderColor: "rgba(0,0,0,0.4)",
                         },
                         dynamicLine: {
                             type: "line",
@@ -182,6 +193,37 @@ function createChart(ctx) {
             },
         },
     });
+}
+
+function updateAnnotationZonesFromYScale() {
+    const yScale = chart.scales.y;
+    if (!yScale) return;
+
+    const annotations = chart.options.plugins.annotation.annotations;
+
+    annotations.lowZone.yMin = yScale.min;
+    annotations.lowZone.yMax = 4;
+
+    annotations.inRangeZone.yMin = 4;
+    annotations.inRangeZone.yMax = 8;
+
+    annotations.highYellowZone.yMin = 8;
+    annotations.highYellowZone.yMax = 10;
+
+    annotations.veryHighZone.yMin = 10;
+    annotations.veryHighZone.yMax = yScale.max;
+}
+
+//To fix the background colours not being in the right zones on page load
+function updateAnnotationZonesFromYMax(yMax) {
+    const annotations = chart.options.plugins.annotation.annotations;
+    annotations.lowZone.yMax = 4;
+    annotations.inRangeZone.yMin = 4;
+    annotations.inRangeZone.yMax = 8;
+    annotations.highYellowZone.yMin = 8;
+    annotations.highYellowZone.yMax = 10;
+    annotations.veryHighZone.yMin = 10;
+    annotations.veryHighZone.yMax = yMax;
 }
 
 function updateChartForDate(date) {
@@ -216,15 +258,21 @@ function updateChartForDate(date) {
     
     // Automatically scale y-axis to fit data
     //Always show at least up to 10 but higher if needed
-    chart.options.scales.y.max = Math.max(10, Math.ceil(Math.max(...values)));
+    const newYMax = Math.max(10, Math.ceil(Math.max(...values)));
+    chart.options.scales.y.max = newYMax;
+//    chart.options.scales.y.max = Math.max(10, Math.ceil(Math.max(...values)));
     //Always show at least down to 4 but lower if BG is lower than 4
     chart.options.scales.y.min = Math.min(4, Math.floor(Math.min(...values)));
+        
+    updateAnnotationZonesFromYMax(newYMax);
     
     chart.data.labels = labels;
     chart.data.datasets[0].data = values;
     //Specify how many time labels to show below the chart
     chart.options.scales.x.ticks.maxTicksLimit = 6;
     chart.update();
+    
+    
 //    highlightIfToday(date);
 //    updateForwardButtonState(date);
 }

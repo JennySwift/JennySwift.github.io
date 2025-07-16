@@ -43,6 +43,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     
+//    Hide the vertical line when mouse leaves chart
+    document.getElementById("bgChart").addEventListener("mouseleave", () => {
+        chart.options.plugins.annotation.annotations.dynamicLine.value = null;
+        chart.update("none");
+    });
+    
     document.getElementById("bgChart").addEventListener("mousemove", (evt) => {
         const points = chart.getElementsAtEventForMode(evt, "nearest", { intersect: false }, false);
         if (points.length > 0) {

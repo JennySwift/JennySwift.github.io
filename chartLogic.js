@@ -193,6 +193,7 @@ function updateChartForDate(date) {
     })
                                 );
     const values = filtered.map(r => r.value);
+    logChartLabelsAndValues(labels, values);
     
     // Automatically scale y-axis to fit data
     //Always show at least up to 10 but higher if needed
@@ -202,9 +203,18 @@ function updateChartForDate(date) {
     
     chart.data.labels = labels;
     chart.data.datasets[0].data = values;
+    //Specify how many time labels to show below the chart
+    chart.options.scales.x.ticks.maxTicksLimit = 6;
     chart.update();
 //    highlightIfToday(date);
 //    updateForwardButtonState(date);
+}
+
+function logChartLabelsAndValues(labels, values) {
+    console.log("📈 Chart data points for selected date:");
+    for (let i = 0; i < labels.length; i++) {
+        console.log(`→ ${labels[i]} = ${values[i]}`);
+    }
 }
 
 function jumpToTime() {

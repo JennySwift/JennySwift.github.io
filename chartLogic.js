@@ -46,8 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
         selectedDateInput.value = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
         .toISOString()
         .split("T")[0];
-//
-//        testBasicTimeChart(ctx);
+
         chart = createChart(ctx);
         updateChartForDate(today);
     });
@@ -74,20 +73,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     
     //    Hide the vertical line when mouse leaves chart
-//    document.getElementById("bgChart").addEventListener("mouseleave", () => {
-//        chart.options.plugins.annotation.annotations.dynamicLine.value = null;
-//        chart.update("none");
-//    });
+    //    document.getElementById("bgChart").addEventListener("mouseleave", () => {
+    //        chart.options.plugins.annotation.annotations.dynamicLine.value = null;
+    //        chart.update("none");
+    //    });
     
-//    document.getElementById("bgChart").addEventListener("mousemove", (evt) => {
-//        const points = chart.getElementsAtEventForMode(evt, "nearest", { intersect: false }, false);
-//        if (points.length > 0) {
-//            const index = points[0].index;
-//            const label = chart.data.labels[index];
-//            chart.options.plugins.annotation.annotations.dynamicLine.value = label;
-//            chart.update("none");
-//        }
-//    });
+    document.getElementById("bgChart").addEventListener("mousemove", (evt) => {
+        const points = chart.getElementsAtEventForMode(evt, "nearest", { intersect: false }, false);
+        if (points.length > 0) {
+            const index = points[0].index;
+            const label = chart.data.labels[index];
+            chart.options.plugins.annotation.annotations.dynamicLine.value = label;
+            chart.update("none");
+        }
+    });
 });
 
 

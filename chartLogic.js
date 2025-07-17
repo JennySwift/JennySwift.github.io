@@ -461,6 +461,8 @@ function updateChartForDate(date) {
         tension: 0.1
     };
     
+    
+    
     const bolusDataset = {
         label: "Bolus",
         data: bolusesForDay.map(dose => ({
@@ -472,12 +474,12 @@ function updateChartForDate(date) {
 //            y: dose.amount,
             type: "bolus"
         })),
-        pointRadius: 7,
-        pointHoverRadius: 10,
-        backgroundColor: "#2196f3",
-        borderColor: "#1565c0",
-        borderWidth: 2,
-        showLine: false
+        type: "bar",
+        backgroundColor: "#1976d2",  // a clear blue
+        borderColor: "#004ba0",
+        borderWidth: 1,
+        barPercentage: 1.0,
+        categoryPercentage: 1.0
     };
     
 //    const bolusDataset = {

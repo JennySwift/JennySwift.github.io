@@ -124,14 +124,22 @@ function updateAnnotationZonesFromYMax(yMax) {
 function updateChartForDate(date) {
 //    console.log("🛠 updateChartForDate called with:", date.toString());
 //    console.log("📅 input field currently shows:", document.getElementById("selectedDate").value);
+    
     const start = new Date(date);
     start.setHours(0, 0, 0, 0);
+
+    const end = new Date(start);
+//    const end = new Date(); // use current time instead of fixed end-of-day
+    end.setDate(end.getDate() + 1); // midnight next day
+
+    chart.options.scales.x.min = start;
+    chart.options.scales.x.max = end;
     
     //If I want the graph to not go till the end of today
     //    const end = new Date(start);
     //    end.setDate(end.getDate() + 1);
     //If I want it to go till the end of today
-    const end = new Date(); // use current time instead of fixed end-of-day
+    
     
     const heading = document.getElementById("dateHeading");
     heading.textContent = start.toLocaleDateString("en-AU", {

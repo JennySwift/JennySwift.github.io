@@ -36,7 +36,7 @@ const drawNoteIconsPlugin = {
 
         dataset.data.forEach((point) => {
             const x = scales.x.getPixelForValue(point.x);
-            const y = scales.y.getPixelForValue(point.y);
+            const y = scales.y.getPixelForValue(point.y) - 30; // ⬆️ shift icon up by 10px
             const iconSize = 100;
 
             ctx.drawImage(noteIcon, x - iconSize / 2, y - iconSize / 2, iconSize, iconSize);
@@ -429,7 +429,7 @@ function setFoodChartYScales(netCarbValues) {
 function getNotesXYPoints(yValue) {
     return notes.map(note => ({
         x: note.timestamp,
-        y: bgChart.options.scales.y.min + 0.5,
+        y: bgChart.options.scales.y.min - 0.5,
         text: note.text,
         type: "note"
     }));

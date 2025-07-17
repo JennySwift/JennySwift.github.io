@@ -233,6 +233,10 @@ function updateFoodChartForDate(date) {
     foodChart.data.datasets[0].data = data;
     foodChart.options.scales.x.min = startOfDay;
     foodChart.options.scales.x.max = endOfDay;
+    
+    const netCarbValues = foodLogsForDay.map(log => log.netCarbs);
+    setFoodChartYScales(netCarbValues);
+    
     foodChart.update();
 }
 
@@ -262,6 +266,7 @@ function updateChartForDate(date) {
     const glucoseValues = filtered.map(r => r.value);
 
     setChartYScales(glucoseValues);
+    
 
     const noteDataset = {
         label: "Notes",
@@ -320,6 +325,11 @@ function setChartYScales(glucoseValues) {
     bgChart.options.scales.y.max = Math.max(10, Math.ceil(Math.max(...glucoseValues)));
     //Always show at least down to 4 but lower if BG is lower than 4
     bgChart.options.scales.y.min = Math.min(4, Math.floor(Math.min(...glucoseValues)));
+}
+
+function setFoodChartYScales(netCarbValues) {
+    foodChart.options.scales.y.min = 0;
+    foodChart.options.scales.y.max = Math.max(40, Math.ceil(Math.max(...netCarbValues)));
 }
 
 function getFoodLogXYPoints(yValue) {

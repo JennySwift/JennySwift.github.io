@@ -311,6 +311,7 @@ function setChartXScales(start, end) {
     bgChart.options.scales.x.max = end;
     
     bgChart.options.scales.x.ticks.maxTicksLimit = 12;
+    foodChart.options.scales.x.ticks.maxTicksLimit = 12;
 }
 
 //Automatically scale y-axis to fit data

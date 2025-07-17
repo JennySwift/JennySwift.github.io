@@ -467,13 +467,14 @@ function updateChartForDate(date) {
         label: "Bolus",
         data: bolusesForDay.map(dose => ({
             x: dose.timestamp,
-            y: 8,
+            y: dose.amount,
             amount: dose.amount,
             notes: dose.notes,
             source: dose.source,
 //            y: dose.amount,
             type: "bolus"
         })),
+        yAxisID: "yBolus",
         type: "bar",
         backgroundColor: "#1976d2",
           borderColor: "black",
@@ -499,6 +500,13 @@ function updateChartForDate(date) {
         bolusDataset
     ];
 
+    console.log("📊 Bolus data being graphed:", bolusDoses.map(b => ({
+        x: b.timestamp,
+        xStr: b.timestamp.toLocaleTimeString(),
+        y: b.amount
+    })));
+    
+    
     bgChart.update();
     updateFoodChartForDate(date);
     

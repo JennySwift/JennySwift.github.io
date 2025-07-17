@@ -62,8 +62,11 @@ const tooltipCallbacks = {
         }
         
         if (point?.type === "bolus") {
-            return `💉 ${point.amount.toFixed(2)}U bolus`;
+            return `💉 ${point.y.toFixed(2)}U bolus`;
         }
+//        if (point?.type === "bolus") {
+//            return `💉 ${point.amount.toFixed(2)}U bolus`;
+//        }
         
         
         // Default for BG readings
@@ -262,6 +265,14 @@ function createBGChart(ctx) {
                         drawTicks: true,
                         drawBorder: true,
                     },
+                },
+                //Create second y axis
+                yBolus: {
+                    position: "right",
+                    title: { display: true, text: "Bolus (U)" },
+                    grid: { display: false }, // optional: turn off bolus grid lines
+                    min: 0,
+                    max: 10, // adjust based on your typical max bolus
                 }
             },
             plugins: {
@@ -278,6 +289,15 @@ function createBGChart(ctx) {
                 },
                 drawNoteIcons: drawNoteIconsPlugin
             },
+//            interaction: {
+//              mode: "nearest",
+//              intersect: true,
+//            }
+            interaction: {
+                mode: "nearest",
+                intersect: true,
+                axis: "x"
+            }
             interaction: {
                 mode: "index",
                 intersect: false,

@@ -276,9 +276,11 @@ function createBGChart(ctx) {
                 },
             },
             interaction: {
-                mode: "nearest",
+                mode: "index", //to try to fix the lag of the vertical line
                 intersect: false,
+                axis: "x", //to try to fix the lag of the vertical line
             },
+            
             animation: {
                 onComplete: () => {
                     updateAnnotationZonesFromYScale();

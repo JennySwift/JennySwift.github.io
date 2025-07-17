@@ -44,7 +44,6 @@ function getAnnotationZones(borderWidth) {
 }
 
 function getChartTooltip() {
-    console.log("📌 getChartTooltip CALLED")
     return {
         callbacks: {
             title: (context) => context[0].label,
@@ -104,7 +103,60 @@ function getChartData() {
     };
 }
 
-function createChart(ctx) {
+function createFoodChart(ctx) {
+    return new Chart(ctx, {
+        type: "scatter",
+        data: {
+            datasets: [{
+                label: "Food Log",
+                data: [], // we'll set this in updateFoodChartForDate
+                backgroundColor: "green",
+                borderColor: "green",
+                pointRadius: 8,
+                pointStyle: "rectRot",
+                showLine: false,
+                parsing: false // allow full control over tooltip contents
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: "time",
+                    time: {
+                        unit: "hour",
+                        displayFormats: { hour: "h:mm a" }
+                    },
+                    title: { display: true, text: "Time of Day" },
+                    min: new Date().setHours(0, 0, 0, 0),
+                    max: new Date().setHours(24, 0, 0, 0)
+                },
+                y: {
+                    title: { display: true, text: "Net Carbs (g)" }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: context => {
+                            const point = context.raw;
+                            return [
+                                `🍽 ${point.foodName}`,
+                                `🔥 ${point.calories} cal`,
+                                `🍌 ${point.netCarbs}g net carbs`,
+                                `🥑 ${point.fat}g fat`
+                            ];
+                        }
+                    }
+                },
+                legend: { display: false }
+            },
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+
+function createBGChart(ctx) {
     let borderWidth = 2;
 
     return new Chart(ctx, {
@@ -162,14 +214,14 @@ function createChart(ctx) {
             animation: {
                 onComplete: () => {
                     updateAnnotationZonesFromYScale();
-                    chart.update();
+                    bgChart.update();
                 }
             },
             resizeDelay: 0,
             onResize: () => {
-                if (chart && chart.scales?.y) {
+                if (bgChart && bgChart.scales?.y) {
                     updateAnnotationZonesFromYScale();
-                    chart.update();
+                    bgChart.update();
                 }
             },
         },

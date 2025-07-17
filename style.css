@@ -9,12 +9,26 @@ h1 {
   margin-bottom: 2rem;
 }
 
-#chartContainer {
+#bgChartContainer {
   display: flex;
   justify-content: center;   /* Center horizontally */
   align-items: center;       /* Center vertically if needed */
   height: 400px;
   width: 100%;
+}
+
+#foodChartContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  height: 200px;
+  width: 100%;
+}
+
+#foodChart {
+  max-width: 100%;
+  max-height: 100%;
 }
 
 #bgChart {

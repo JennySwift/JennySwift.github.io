@@ -5,13 +5,15 @@
 //  Created by Jenny Swift on 16/7/2025.
 //
 
-let chart;
+let bgChart;
+let foodChart;
 let glucoseReadings = [];
 let foodLogs = [];
 let notes = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     const ctx = document.getElementById("bgChart").getContext("2d");
+    const foodCtx = document.getElementById("foodChart").getContext("2d");
     const selectedDateInput = document.getElementById("selectedDate");
     
     fetch("https://dl.dropboxusercontent.com/scl/fi/0udoq3x6gkchstkq2hqxg/glucoseData.json?rlkey=vllvwb6wlx2el12c9aqijw37p")
@@ -46,8 +48,12 @@ document.addEventListener("DOMContentLoaded", () => {
         .toISOString()
         .split("T")[0];
         
-        chart = createChart(ctx);
+        bgChart = createBGChart(ctx);
+        foodChart = createFoodChart(foodCtx);
         updateChartForDate(today);
+        
+        
+        
     });
     
     selectedDateInput.addEventListener("change", () => {
@@ -59,9 +65,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("touchstart", (e) => {
         const chartEl = document.getElementById("bgChart");
         if (!chartEl.contains(e.target)) {
-            chart.setActiveElements([]);
-            chart.options.plugins.annotation.annotations.dynamicLine.value = null;
-            chart.update();
+            bgChart.setActiveElements([]);
+            bgChart.options.plugins.annotation.annotations.dynamicLine.value = null;
+            bgChart.update();
         }
     });
     
@@ -73,17 +79,17 @@ document.addEventListener("DOMContentLoaded", () => {
     
     //    Hide the vertical line when mouse leaves chart
     document.getElementById("bgChart").addEventListener("mouseleave", () => {
-        chart.options.plugins.annotation.annotations.dynamicLine.value = null;
-        chart.update("none");
+        bgChart.options.plugins.annotation.annotations.dynamicLine.value = null;
+        bgChart.update("none");
     });
     
     document.getElementById("bgChart").addEventListener("mousemove", (evt) => {
-        const points = chart.getElementsAtEventForMode(evt, "nearest", { intersect: false }, false);
+        const points = bgChart.getElementsAtEventForMode(evt, "nearest", { intersect: false }, false);
         if (points.length > 0) {
             const index = points[0].index;
-            const label = chart.data.labels[index];
-            chart.options.plugins.annotation.annotations.dynamicLine.value = label;
-            chart.update("none");
+            const label = bgChart.data.labels[index];
+            bgChart.options.plugins.annotation.annotations.dynamicLine.value = label;
+            bgChart.update("none");
         }
     });
 });
@@ -91,10 +97,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 function updateAnnotationZonesFromYScale() {
-    const yScale = chart.scales.y;
+    const yScale = bgChart.scales.y;
     if (!yScale) return;
     
-    const annotations = chart.options.plugins.annotation.annotations;
+    const annotations = bgChart.options.plugins.annotation.annotations;
     
     annotations.lowZone.yMin = yScale.min;
     annotations.lowZone.yMax = 4;
@@ -207,6 +213,30 @@ function showNotesForDate(date) {
     });
 }
 
+function updateFoodChartForDate(date) {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(startOfDay);
+    endOfDay.setDate(endOfDay.getDate() + 1);
+
+    const foodLogsForDay = foodLogs.filter(log => log.timestamp >= startOfDay && log.timestamp < endOfDay);
+
+    const data = foodLogsForDay.map(log => ({
+        x: log.timestamp,
+        y: log.netCarbs,
+        foodName: log.foodName,
+        calories: log.calories,
+        netCarbs: log.netCarbs,
+        fat: log.fat
+    }));
+
+    foodChart.data.datasets[0].data = data;
+    foodChart.options.scales.x.min = startOfDay;
+    foodChart.options.scales.x.max = endOfDay;
+    foodChart.update();
+}
+
+//For BG chart
 function updateChartForDate(date) {
     showNotesForDate(date);
     showFoodLogsForDate(date);
@@ -235,7 +265,7 @@ function updateChartForDate(date) {
 
     const noteDataset = {
         label: "Notes",
-        data: getNotesXYPoints(chart.options.scales.y.min),
+        data: getNotesXYPoints(bgChart.options.scales.y.min),
         backgroundColor: "yellow",
         borderColor: "yellow",
         pointRadius: 10,
@@ -246,7 +276,7 @@ function updateChartForDate(date) {
     const foodLogDataset = {
         label: "Food Logs",
         type: "scatter",
-        data: getFoodLogXYPoints(chart.options.scales.y.min),
+        data: getFoodLogXYPoints(bgChart.options.scales.y.min),
         backgroundColor: "green",
         borderColor: "green",
         pointRadius: 10,
@@ -266,28 +296,29 @@ function updateChartForDate(date) {
         tension: 0.1
     };
 
-    chart.data.datasets = [
+    bgChart.data.datasets = [
         glucoseDataset,
         noteDataset,
         foodLogDataset
     ];
 
-    chart.update();
+    bgChart.update();
+    updateFoodChartForDate(date);
 }
 
 function setChartXScales(start, end) {
-    chart.options.scales.x.min = start;
-    chart.options.scales.x.max = end;
+    bgChart.options.scales.x.min = start;
+    bgChart.options.scales.x.max = end;
     
-    chart.options.scales.x.ticks.maxTicksLimit = 12;
+    bgChart.options.scales.x.ticks.maxTicksLimit = 12;
 }
 
 //Automatically scale y-axis to fit data
 function setChartYScales(glucoseValues) {
     //Always show at least up to 10 but higher if needed
-    chart.options.scales.y.max = Math.max(10, Math.ceil(Math.max(...glucoseValues)));
+    bgChart.options.scales.y.max = Math.max(10, Math.ceil(Math.max(...glucoseValues)));
     //Always show at least down to 4 but lower if BG is lower than 4
-    chart.options.scales.y.min = Math.min(4, Math.floor(Math.min(...glucoseValues)));
+    bgChart.options.scales.y.min = Math.min(4, Math.floor(Math.min(...glucoseValues)));
 }
 
 function getFoodLogXYPoints(yValue) {
@@ -305,7 +336,7 @@ function getFoodLogXYPoints(yValue) {
 function getNotesXYPoints(yValue) {
     return notes.map(note => ({
         x: note.timestamp,
-        y: chart.options.scales.y.min + 0.5,
+        y: bgChart.options.scales.y.min + 0.5,
         text: note.text,
         type: "note"
     }));
@@ -328,7 +359,7 @@ function jumpToTime() {
         return;
     }
     
-    const labels = chart.data.labels;
+    const labels = bgChart.data.labels;
     
     const formattedTarget = parsed.toLocaleTimeString([], {
         hour: "numeric",
@@ -353,8 +384,8 @@ function jumpToTime() {
     
     const matchedLabel = labels[closestIndex];
     
-    chart.options.plugins.annotation.annotations.dynamicLine.value = matchedLabel;
-    chart.setActiveElements([{ datasetIndex: 0, index: closestIndex }]);
-    chart.tooltip.setActiveElements([{ datasetIndex: 0, index: closestIndex }], { x: 0, y: 0 });
-    chart.update();
+    bgChart.options.plugins.annotation.annotations.dynamicLine.value = matchedLabel;
+    bgChart.setActiveElements([{ datasetIndex: 0, index: closestIndex }]);
+    bgChart.tooltip.setActiveElements([{ datasetIndex: 0, index: closestIndex }], { x: 0, y: 0 });
+    bgChart.update();
 }

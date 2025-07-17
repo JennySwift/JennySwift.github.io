@@ -46,6 +46,7 @@ const drawNoteIconsPlugin = {
 Chart.register(drawNoteIconsPlugin);
 
 function updateVerticalLines(timestamp) {
+    console.log("📏 Setting dynamicLine value to:", timestamp);  // ← Add this
     if (bgChart) {
         bgChart.options.plugins.annotation.annotations.dynamicLine.value = timestamp;
         bgChart.update();
@@ -397,8 +398,8 @@ function updateChartForDate(date) {
     };
 
     bgChart.data.datasets = [
-        noteDataset,
-        glucoseDataset
+        glucoseDataset,
+        noteDataset
     ];
 
     bgChart.update();

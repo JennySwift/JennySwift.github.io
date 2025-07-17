@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         attachChartMousemoveSync(foodChart, "foodChart");
         
         
-        attachChartMouseleaveClear();
+//        attachChartMouseleaveClear();
         
     });
     
@@ -212,11 +212,11 @@ function showFoodLogsForDate(date) {
     const foodLogsContainer = document.getElementById("foodLogsContainer");
     foodLogsContainer.innerHTML = ""; // clear old food logs
 
-    console.log("Food logs:", foodLogs);
+//    console.log("Food logs:", foodLogs);
     
     const foodLogsForDay = foodLogs.filter(log => log.timestamp >= startOfDay && log.timestamp < endOfDay);
             
-    console.log("Food Logs for day:", foodLogsForDay);
+//    console.log("Food Logs for day:", foodLogsForDay);
 
     if (foodLogsForDay.length === 0) {
         foodLogsContainer.textContent = "No food logs for this day.";
@@ -436,7 +436,8 @@ function jumpToTime(inputTime) {
         const input = document.getElementById("jumpInput").value.trim();
         if (!input) return;
 
-        parsed = parseFlexibleTime(input);
+        const selected = document.getElementById("selectedDate").valueAsDate;
+        parsed = parseFlexibleTime(input, selected);
         if (!parsed) {
             alert("Couldn't understand that time. Try e.g. 2:30 PM or 14:00");
             return;
@@ -469,13 +470,17 @@ function jumpToTime(inputTime) {
     console.log("🩸 BG value at match:", dataset[closestIndex]?.y);
     
     const timestamp = bgChart.data.datasets[0].data[closestIndex]?.x ?? null;
+    
+    console.log("🧪 jumpToTime → dataset length:", dataset.length);
+    console.log("🧪 jumpToTime → closestIndex:", closestIndex);
+    console.log("🧪 jumpToTime → timestamp to jump to:", timestamp);
+    
     updateVerticalLines(timestamp);
 
     bgChart.setActiveElements([{ datasetIndex: 0, index: closestIndex }]);
     bgChart.tooltip.setActiveElements([{ datasetIndex: 0, index: closestIndex }], { x: 0, y: 0 });
     bgChart.update();
 
-    updateVerticalLines(bgChart.data.datasets[0].data[closestIndex]?.x ?? null);
 //    bgChart.options.plugins.annotation.annotations.dynamicLine.value = matchedLabel;
 //    bgChart.setActiveElements([{ datasetIndex: 0, index: closestIndex }]);
 //    bgChart.tooltip.setActiveElements([{ datasetIndex: 0, index: closestIndex }], { x: 0, y: 0 });

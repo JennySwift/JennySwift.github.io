@@ -1,3 +1,62 @@
+
+const sharedTooltipStyle = {
+    titleFont: { size: 18 },
+    bodyFont: { size: 18 },
+    footerFont: { size: 14 },
+    padding: 14,
+    usePointStyle: true,
+    labelPointStyle: {
+        pointStyle: "circle",
+        rotation: 0,
+    },
+    displayColors: false
+};
+
+const foodChartTooltipCallbacks = {
+    label: context => {
+        const point = context.raw;
+        return [
+            `🍽 ${point.foodName}`,
+            `🔥 ${point.calories} cal`,
+            `🍌 ${point.netCarbs}g net carbs`,
+            `🥑 ${point.fat}g fat`
+        ];
+    }
+}
+
+const tooltipCallbacks = {
+    title: (context) => context[0].label,
+    label: (context) => {
+        const dataset = context.dataset;
+        const point = context.raw;
+        
+        if (point?.type === "note") {
+            const text = point?.text ?? "(no text)";
+            return `📝 ${text}`;
+        }
+        
+        if (point?.type === "foodLog") {
+            return [
+                `🍽 ${point.foodName}`,
+                `🔥 ${point.calories} cal`,
+                `🍌 ${point.netCarbs}g net carbs`,
+                `🥑 ${point.fat}g fat`
+            ];
+        }
+        
+        
+        // Default for BG readings
+        const mmol = context.parsed.y;
+        const mgdl = Math.round(mmol * 18);
+        return [
+            `🩸 ${mmol.toFixed(1)} mmol/L`,
+            `🩸 ${mgdl} mg/dL`
+        ];
+    }
+};
+
+
+
 function getAnnotationZones(borderWidth) {
     return {
         lowZone: {
@@ -40,51 +99,6 @@ function getAnnotationZones(borderWidth) {
             display: ctx => ctx.chart.options.plugins.annotation.annotations.dynamicLine.value !== null,
             label: { display: false },
         },
-    };
-}
-
-function getChartTooltip() {
-    return {
-        callbacks: {
-            title: (context) => context[0].label,
-            label: (context) => {
-                const dataset = context.dataset;
-                const point = context.raw;
-                
-                if (point?.type === "note") {
-                    const text = point?.text ?? "(no text)";
-                    return `📝 ${text}`;
-                }
-                
-                if (point?.type === "foodLog") {
-                    return [
-                        `🍽 ${point.foodName}`,
-                        `🔥 ${point.calories} cal`,
-                        `🍌 ${point.netCarbs}g net carbs`,
-                        `🥑 ${point.fat}g fat`
-                    ];
-                }
-                
-                
-                // Default for BG readings
-                const mmol = context.parsed.y;
-                const mgdl = Math.round(mmol * 18);
-                return [
-                    `🩸 ${mmol.toFixed(1)} mmol/L`,
-                    `🩸 ${mgdl} mg/dL`
-                ];
-            },
-        },
-        titleFont: { size: 18 },
-        bodyFont: { size: 18 },
-        footerFont: { size: 14 },
-        padding: 14,
-        usePointStyle: true,
-        labelPointStyle: {
-            pointStyle: "circle",
-            rotation: 0,
-        },
-        displayColors: false,
     };
 }
 
@@ -158,17 +172,8 @@ function createFoodChart(ctx) {
             },
             plugins: {
                 tooltip: {
-                    callbacks: {
-                        label: context => {
-                            const point = context.raw;
-                            return [
-                                `🍽 ${point.foodName}`,
-                                `🔥 ${point.calories} cal`,
-                                `🍌 ${point.netCarbs}g net carbs`,
-                                `🥑 ${point.fat}g fat`
-                            ];
-                        }
-                    }
+                    ...sharedTooltipStyle,
+                    callbacks: foodChartTooltipCallbacks
                 },
                 legend: { display: false },
                 annotation: {
@@ -246,7 +251,10 @@ function createBGChart(ctx) {
                 }
             },
             plugins: {
-                tooltip: getChartTooltip(),
+                tooltip: {
+                    ...sharedTooltipStyle,
+                    callbacks: tooltipCallbacks
+                },
                 legend: { display: true },
                 annotation: {
                     annotations: getAnnotationZones(borderWidth),

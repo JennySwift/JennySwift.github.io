@@ -267,6 +267,7 @@ function createBGChart(ctx) {
                         dynamicLine: getDynamicLineAnnotation()
                     }
                 },
+                drawNoteIcons: drawNoteIconsPlugin
             },
             interaction: {
                 mode: "index",

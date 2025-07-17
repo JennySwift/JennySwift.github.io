@@ -11,6 +11,40 @@ let glucoseReadings = [];
 let foodLogs = [];
 let notes = [];
 
+const noteIcon = new Image();
+noteIcon.src = 'icons/note-icon.png';
+let noteIconLoaded = false;
+
+
+noteIcon.onerror = () => {
+    console.error("❌ Failed to load note icon from:", noteIcon.src);
+};
+
+noteIcon.onload = () => {
+    noteIconLoaded = true;
+    console.log("✅ Note icon loaded successfully");
+    if (bgChart) bgChart.update();
+};
+const drawNoteIconsPlugin = {
+    id: 'drawNoteIcons',
+    afterDatasetsDraw(chart, args, options) {
+        if (!noteIconLoaded) return;
+
+        const {ctx, scales} = chart;
+        const dataset = chart.data.datasets.find(d => d.label === "Notes");
+        if (!dataset) return;
+
+        dataset.data.forEach((point) => {
+            const x = scales.x.getPixelForValue(point.x);
+            const y = scales.y.getPixelForValue(point.y);
+            const iconSize = 100;
+
+            ctx.drawImage(noteIcon, x - iconSize / 2, y - iconSize / 2, iconSize, iconSize);
+        });
+    }
+};
+Chart.register(drawNoteIconsPlugin);
+
 function updateVerticalLines(timestamp) {
     if (bgChart) {
         bgChart.options.plugins.annotation.annotations.dynamicLine.value = timestamp;
@@ -341,15 +375,16 @@ function updateChartForDate(date) {
 
     setChartYScales(glucoseValues);
     
+    
 
     const noteDataset = {
         label: "Notes",
         data: getNotesXYPoints(bgChart.options.scales.y.min),
-        backgroundColor: "yellow",
-        borderColor: "yellow",
-        pointRadius: 10,
-        pointStyle: "rectRot",
+//        pointStyle: noteIcon,
+        pointRadius: 0,
         showLine: false,
+        backgroundColor: "transparent", // optional if your icon has transparency
+        borderColor: "transparent"      // same here
     };
     
     const glucoseDataset = {

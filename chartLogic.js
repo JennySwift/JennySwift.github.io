@@ -192,7 +192,7 @@ function showFoodLogsForDate(date) {
         div.classList.add("food-log-block");
 
         const time = formatTime12hCompact(log.timestamp);
-
+        
         div.innerHTML = `
             <strong>${time}</strong>: ${log.foodName}
             <div class="food-log-details">
@@ -201,6 +201,11 @@ function showFoodLogsForDate(date) {
                 <span>🔥 Calories: ${log.calories}</span>
             </div>
         `;
+        div.setAttribute("data-timestamp", log.timestamp.toISOString());
+        div.style.cursor = "pointer";
+        div.addEventListener("click", () => {
+            jumpToTime(new Date(log.timestamp));
+        });
 
         foodLogsContainer.appendChild(div);
     });
@@ -391,14 +396,21 @@ function logChartLabelsAndValues(labels, values) {
     }
 }
 
-function jumpToTime() {
-    const input = document.getElementById("jumpInput").value.trim();
-    if (!input) return;
 
-    const parsed = parseFlexibleTime(input);
-    if (!parsed) {
-        alert("Couldn't understand that time. Try e.g. 2:30 PM or 14:00");
-        return;
+function jumpToTime(inputTime) {
+    let parsed;
+
+    if (inputTime instanceof Date) {
+        parsed = inputTime;
+    } else {
+        const input = document.getElementById("jumpInput").value.trim();
+        if (!input) return;
+
+        parsed = parseFlexibleTime(input);
+        if (!parsed) {
+            alert("Couldn't understand that time. Try e.g. 2:30 PM or 14:00");
+            return;
+        }
     }
 
     const dataset = bgChart.data.datasets[0].data;

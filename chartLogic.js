@@ -158,6 +158,11 @@ function showFoodLogsForDate(date) {
 
         div.innerHTML = `
             <strong>${time}</strong>: ${log.foodName}
+            <div class="food-log-details">
+                <span>🍌 Net Carbs: ${log.netCarbs}g</span>
+                <span>🥑 Fat: ${log.fat}g</span>
+                <span>🔥 Calories: ${log.calories}</span>
+            </div>
         `;
 
         foodLogsContainer.appendChild(div);

@@ -289,19 +289,39 @@ function createBGChart(ctx) {
                 },
                 drawNoteIcons: drawNoteIconsPlugin
             },
-//            interaction: {
-//              mode: "nearest",
-//              intersect: true,
-//            }
+            //This is the most strict and precise configuration:
+            //You must actually hover the point or bar.
+            //Each dataset will show its tooltip independently.
+            //No shared tooltips across x-axis.
+            //Fixes your issue where hovering a bar shows a tooltip from 12:04 am, or mixes in notes/BG values.
+            // Tooltip + Interaction Mode Guide:
+            // ─────────────────────────────────────────────
+            // interaction.mode options:
+            //   "point"   → Only show tooltip when directly hovering a point/bar. (✔️ Precise)
+            //   "nearest" → Show tooltip for nearest visible point even if not hovered directly.
+            //   "index"   → Show tooltips for all datasets aligned at the same x position.
+            //   "dataset" → Show tooltip for all points in the same dataset closest to cursor.
+            //   "x"       → Tooltip for closest point with matching x (used with intersect: false).
+            //   "y"       → Tooltip for closest point with matching y (used with intersect: false).
+            //
+            // interaction.intersect:
+            //   true  → Tooltip only shows when cursor is directly over a point/bar.
+            //   false → Tooltip shows when cursor is in the same x/y position, even if not over the point.
+            //
+            // Your current setup for precise tooltips:
+            //   interaction: { mode: "point", intersect: true },
+            //   hover: { mode: "point", intersect: true }
+            //
+            // Tip: For line charts, make sure `pointRadius` > 0 to allow hovering.
             interaction: {
-                mode: "nearest",
-                intersect: true,
-                axis: "x"
-            }
-            interaction: {
-                mode: "index",
-                intersect: false,
-                axis: "x",
+                mode: "point",
+                //true: must actually hover the point/bar. false: triggers tooltip even when you’re just aligned on the x or y axis (depending on mode).
+
+                intersect: true
+            },
+            hover: {
+                mode: "point",
+                intersect: true
             },
             animation: {
                 onComplete: () => {

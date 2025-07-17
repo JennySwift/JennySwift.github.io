@@ -44,23 +44,36 @@ function getAnnotationZones(borderWidth) {
 }
 
 function getChartTooltip() {
+    console.log("📌 getChartTooltip CALLED")
     return {
         callbacks: {
             title: (context) => context[0].label,
             label: (context) => {
                 const dataset = context.dataset;
+                const point = context.raw;
 
-                // Check if it's a note point
-                if (dataset.label === "Notes") {
-                    const point = context.raw;
-                    const text = point?.text ?? "(no text)";
-                    return `📝 ${text}`;
-                }
+                if (point?.type === "note") {
+                        const text = point?.text ?? "(no text)";
+                        return `📝 ${text}`;
+                    }
+
+                    if (point?.type === "foodLog") {
+                        return [
+                            `🍽 ${point.foodName}`,
+                            `🔥 ${point.calories} cal`,
+                            `🍌 ${point.netCarbs}g net carbs`,
+                            `🥑 ${point.fat}g fat`
+                        ];
+                    }
+
 
                 // Default for BG readings
                 const mmol = context.parsed.y;
                 const mgdl = Math.round(mmol * 18);
-                return [`🩸 ${mmol.toFixed(1)} mmol/L`, `🩸 ${mgdl} mg/dL`];
+                return [
+                    `🩸 ${mmol.toFixed(1)} mmol/L`,
+                    `🩸 ${mgdl} mg/dL`
+                ];
             },
         },
         titleFont: { size: 18 },

@@ -121,6 +121,14 @@ function updateAnnotationZonesFromYMax(yMax) {
     annotations.veryHighZone.yMax = yMax;
 }
 
+function formatTime12hCompact(date) {
+    return date.toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+    }).toLowerCase().replace(' ', '');
+}
+
 function showFoodLogsForDate(date) {
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
@@ -146,10 +154,7 @@ function showFoodLogsForDate(date) {
         const div = document.createElement("div");
         div.classList.add("food-log-block");
 
-        const time = log.timestamp.toLocaleTimeString([], {
-            hour: "numeric",
-            minute: "2-digit"
-        });
+        const time = formatTime12hCompact(log.timestamp);
 
         div.innerHTML = `
             <strong>${time}</strong>: ${log.foodName}
@@ -184,10 +189,7 @@ function showNotesForDate(date) {
         const div = document.createElement("div");
         div.classList.add("note-block");
 
-        const time = note.timestamp.toLocaleTimeString([], {
-            hour: "numeric",
-            minute: "2-digit"
-        });
+        const time = formatTime12hCompact(note.timestamp);
 
         const tags = note.tags?.join(" ") ?? "";
 

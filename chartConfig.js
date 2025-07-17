@@ -149,7 +149,12 @@ function createFoodChart(ctx) {
                 borderColor: chartProps.foodLogColor,
                 pointRadius: chartProps.pointRadius,
                 pointHoverRadius: chartProps.pointHoverRadius,
-                pointStyle: "rectRot",
+                pointStyle: "circle",
+                pointRadius: 6,
+                pointHoverRadius: 10,
+                backgroundColor: "#ffa726",     // orange fill
+                borderColor: "#ef6c00",         // darker orange border
+                borderWidth: 2,
                 showLine: false,
                 parsing: false
             }]

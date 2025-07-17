@@ -366,41 +366,39 @@ function logChartLabelsAndValues(labels, values) {
 function jumpToTime() {
     const input = document.getElementById("jumpInput").value.trim();
     if (!input) return;
-    
+
     const parsed = parseFlexibleTime(input);
     if (!parsed) {
         alert("Couldn't understand that time. Try e.g. 2:30 PM or 14:00");
         return;
     }
-    
-    const labels = bgChart.data.labels;
-    
-    const formattedTarget = parsed.toLocaleTimeString([], {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-    });
-    
+
+    const dataset = bgChart.data.datasets[0].data;
+
     let closestIndex = 0;
     let closestDiff = Infinity;
-    
-    for (let i = 0; i < labels.length; i++) {
-        const label = labels[i];
-        const labelDate = parseFlexibleTime(label);
-        if (!labelDate) continue;
-        
-        const diff = Math.abs(labelDate.getTime() - parsed.getTime());
+
+    for (let i = 0; i < dataset.length; i++) {
+        const dataTime = new Date(dataset[i].x);
+        const diff = Math.abs(dataTime - parsed);
         if (diff < closestDiff) {
             closestDiff = diff;
             closestIndex = i;
         }
     }
-    
-    const matchedLabel = labels[closestIndex];
-    
-    bgChart.options.plugins.annotation.annotations.dynamicLine.value = bgChart.data.datasets[0].data[closestIndex]?.x ?? null;
-    
-//    bgChart.options.plugins.annotation.annotations.dynamicLine.value = matchedLabel;
+
+    const matchedLabel = dataset[closestIndex]?.x;
+    const formattedTarget = parsed.toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+    });
+
+    console.log("⏩ Jumping to:", formattedTarget);
+    console.log("🔍 Matched label:", matchedLabel);
+    console.log("🩸 BG value at match:", dataset[closestIndex]?.y);
+
+    bgChart.options.plugins.annotation.annotations.dynamicLine.value = matchedLabel;
     bgChart.setActiveElements([{ datasetIndex: 0, index: closestIndex }]);
     bgChart.tooltip.setActiveElements([{ datasetIndex: 0, index: closestIndex }], { x: 0, y: 0 });
     bgChart.update();

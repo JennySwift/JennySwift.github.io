@@ -86,9 +86,15 @@ document.addEventListener("DOMContentLoaded", () => {
             tags: n.tags || [],
         })) || [];
         
-        bolusDoses = data.bolusDoses?.map((d) => ({
-            timestamp: new Date(d.timestamp),
-            amount: d.amount
+        bolusDoses = data.bolusDoses?.map((b) => ({
+            timestamp: new Date(b.timestamp),
+            amount: b.amount,
+            duration: b.duration,
+            type: b.type,
+            notes: b.notes,
+            carbRatioUsed: b.carbRatioUsed,
+            source: b.source,
+            tags: b.tags || []
         })) || [];
         
         //        console.log("✅ Food Logs:", foodLogs);
@@ -290,6 +296,43 @@ function showFoodLogsForDate(date) {
     });
 }
 
+function showBolusesForDate(date) {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(startOfDay);
+    endOfDay.setDate(endOfDay.getDate() + 1);
+
+    const container = document.getElementById("bolusContainer");
+    container.innerHTML = "";
+
+    const bolusesForDay = bolusDoses.filter(b => b.timestamp >= startOfDay && b.timestamp < endOfDay);
+
+    if (bolusesForDay.length === 0) {
+        container.textContent = "No bolus doses for this day.";
+        return;
+    }
+
+    bolusesForDay.forEach(bolus => {
+        const div = document.createElement("div");
+        div.classList.add("bolus-block");
+
+        const time = formatTime12hCompact(bolus.timestamp);
+        const amount = bolus.amount?.toFixed(2) ?? "?";
+
+        let extra = "";
+        if (bolus.carbRatioUsed) {
+            extra += ` · Ratio: 1:${bolus.carbRatioUsed}`;
+        }
+        if (bolus.notes) {
+            extra += ` · ${bolus.notes}`;
+        }
+
+        div.innerHTML = `<strong>${time}</strong>: 💉 ${amount}U ${extra}`;
+        container.appendChild(div);
+    });
+}
+
 function showNotesForDate(date) {
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
@@ -359,6 +402,7 @@ function updateFoodChartForDate(date) {
 function updateChartForDate(date) {
     showNotesForDate(date);
     showFoodLogsForDate(date);
+    showBolusesForDate(date);
     
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);

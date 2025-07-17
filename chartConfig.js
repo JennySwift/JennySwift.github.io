@@ -55,6 +55,17 @@ const tooltipCallbacks = {
     }
 };
 
+function getDynamicLineAnnotation() {
+    return {
+        type: "line",
+        scaleID: "x",
+        borderColor: "blue",
+        borderWidth: 2,
+        display: ctx => ctx.chart.options.plugins.annotation.annotations.dynamicLine.value !== null,
+        label: { display: false },
+    };
+}
+
 
 
 function getAnnotationZones(borderWidth) {
@@ -146,15 +157,15 @@ function createFoodChart(ctx) {
                     ticks: {
                         source: "auto", // Let Chart.js choose nice intervals (usually hourly)
                         autoSkip: false
-                      },
-                      grid: {
+                    },
+                    grid: {
                         display: true,
                         color: "#ccc",
                         lineWidth: 1,
                         drawTicks: true,
                         drawBorder: true,
-                      }
-
+                    }
+                    
                 },
                 y: {
                     title: { display: true, text: "Net Carbs (g)" },
@@ -177,16 +188,17 @@ function createFoodChart(ctx) {
                 },
                 legend: { display: false },
                 annotation: {
-                  annotations: {
-                    backgroundZone: {
-                      type: "box",
-                      xMin: null, // entire x-range
-                      xMax: null,
-                      yMin: 0,
-                      yMax: 100,
-                        backgroundColor: "rgba(255, 0, 0, 0.4)"
+                    annotations: {
+                        dynamicLine: getDynamicLineAnnotation(),
+                        backgroundZone: {
+                            type: "box",
+                            xMin: null,
+                            xMax: null,
+                            yMin: 0,
+                            yMax: 100,
+                            backgroundColor: "rgba(255, 0, 0, 0.4)"
+                        }
                     }
-                  }
                 }
             },
             responsive: true,
@@ -215,13 +227,13 @@ function createBGChart(ctx) {
                     ticks: {
                         source: "auto", // Let Chart.js choose nice intervals (usually hourly)
                         autoSkip: false
-                      },
+                    },
                     grid: {
-                      display: true,
-                      color: "#ccc",
-                      lineWidth: 1,
-                      drawTicks: true,
-                      drawBorder: true,
+                        display: true,
+                        color: "#ccc",
+                        lineWidth: 1,
+                        drawTicks: true,
+                        drawBorder: true,
                     },
                     //                    ticks: {
                     //                        autoSkip: true,
@@ -257,7 +269,10 @@ function createBGChart(ctx) {
                 },
                 legend: { display: true },
                 annotation: {
-                    annotations: getAnnotationZones(borderWidth),
+                    annotations: {
+                        ...getAnnotationZones(borderWidth),
+                        dynamicLine: getDynamicLineAnnotation()
+                    }
                 },
             },
             interaction: {

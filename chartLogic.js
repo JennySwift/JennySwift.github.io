@@ -11,6 +11,17 @@ let glucoseReadings = [];
 let foodLogs = [];
 let notes = [];
 
+function updateVerticalLines(timestamp) {
+    if (bgChart) {
+        bgChart.options.plugins.annotation.annotations.dynamicLine.value = timestamp;
+        bgChart.update("none");
+    }
+    if (foodChart) {
+        foodChart.options.plugins.annotation.annotations.dynamicLine.value = timestamp;
+        foodChart.update("none");
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const ctx = document.getElementById("bgChart").getContext("2d");
     const foodCtx = document.getElementById("foodChart").getContext("2d");
@@ -52,7 +63,8 @@ document.addEventListener("DOMContentLoaded", () => {
         foodChart = createFoodChart(foodCtx);
         updateChartForDate(today);
         
-        
+        attachChartMousemoveSync(bgChart, "bgChart");
+        attachChartMousemoveSync(foodChart, "foodChart");
         
     });
     
@@ -83,19 +95,35 @@ document.addEventListener("DOMContentLoaded", () => {
         bgChart.update("none");
     });
     
-    document.getElementById("bgChart").addEventListener("mousemove", (evt) => {
-        if (!bgChart) return;
-
-        const points = bgChart.getElementsAtEventForMode(evt, "nearest", { intersect: false }, false);
-        if (points.length > 0) {
-            const index = points[0].index;
-            const label = bgChart.data.datasets[0].data[index]?.x;
-            bgChart.options.plugins.annotation.annotations.dynamicLine.value = label;
-            bgChart.update("none");
-        }
-    });
+//    document.getElementById("bgChart").addEventListener("mousemove", (evt) => {
+//        if (!bgChart) return;
+//
+//        const points = bgChart.getElementsAtEventForMode(evt, "nearest", { intersect: false }, false);
+//        if (points.length > 0) {
+//            const index = points[0].index;
+//            const label = bgChart.data.datasets[0].data[index]?.x;
+//            bgChart.options.plugins.annotation.annotations.dynamicLine.value = label;
+//            bgChart.update("none");
+//        }
+//    });
+    
+    
 
 });
+
+function attachChartMousemoveSync(chartInstance, chartElementId) {
+    const el = document.getElementById(chartElementId);
+    el.addEventListener("mousemove", (evt) => {
+        if (!chartInstance) return;
+
+        const points = chartInstance.getElementsAtEventForMode(evt, "nearest", { intersect: false }, false);
+        if (points.length > 0) {
+            const index = points[0].index;
+            const label = chartInstance.data.datasets[0].data[index]?.x;
+            updateVerticalLines(label);
+        }
+    });
+}
 
 
 
@@ -397,9 +425,16 @@ function jumpToTime() {
     console.log("⏩ Jumping to:", formattedTarget);
     console.log("🔍 Matched label:", matchedLabel);
     console.log("🩸 BG value at match:", dataset[closestIndex]?.y);
+    
+    const timestamp = bgChart.data.datasets[0].data[closestIndex]?.x ?? null;
+    updateVerticalLines(timestamp);
 
-    bgChart.options.plugins.annotation.annotations.dynamicLine.value = matchedLabel;
     bgChart.setActiveElements([{ datasetIndex: 0, index: closestIndex }]);
     bgChart.tooltip.setActiveElements([{ datasetIndex: 0, index: closestIndex }], { x: 0, y: 0 });
     bgChart.update();
+
+//    bgChart.options.plugins.annotation.annotations.dynamicLine.value = matchedLabel;
+//    bgChart.setActiveElements([{ datasetIndex: 0, index: closestIndex }]);
+//    bgChart.tooltip.setActiveElements([{ datasetIndex: 0, index: closestIndex }], { x: 0, y: 0 });
+//    bgChart.update();
 }

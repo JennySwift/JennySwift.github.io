@@ -66,6 +66,12 @@ document.addEventListener("DOMContentLoaded", () => {
         attachChartMousemoveSync(bgChart, "bgChart");
         attachChartMousemoveSync(foodChart, "foodChart");
         
+        //    Hide the vertical line when mouse leaves chart
+        document.getElementById("bgChart").addEventListener("mouseleave", () => {
+            bgChart.options.plugins.annotation.annotations.dynamicLine.value = null;
+            bgChart.update("none");
+        });
+        
     });
     
     selectedDateInput.addEventListener("change", () => {
@@ -89,11 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     
-    //    Hide the vertical line when mouse leaves chart
-    document.getElementById("bgChart").addEventListener("mouseleave", () => {
-        bgChart.options.plugins.annotation.annotations.dynamicLine.value = null;
-        bgChart.update("none");
-    });
+    
     
 //    document.getElementById("bgChart").addEventListener("mousemove", (evt) => {
 //        if (!bgChart) return;

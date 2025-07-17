@@ -48,13 +48,11 @@ document.addEventListener("DOMContentLoaded", () => {
         
         chart = createChart(ctx);
         updateChartForDate(today);
-//        showNotesForDate(today);
     });
     
     selectedDateInput.addEventListener("change", () => {
         const selected = selectedDateInput.valueAsDate;
         updateChartForDate(selected);
-//        showNotesForDate(selected);
     });
     
     // Hide tooltip + vertical line when tapping outside chart on iPhone
@@ -123,8 +121,45 @@ function updateAnnotationZonesFromYMax(yMax) {
     annotations.veryHighZone.yMax = yMax;
 }
 
+function showFoodLogsForDate(date) {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(startOfDay);
+    endOfDay.setDate(endOfDay.getDate() + 1);
+
+    const foodLogsContainer = document.getElementById("foodLogsContainer");
+    foodLogsContainer.innerHTML = ""; // clear old food logs
+
+    console.log("Food logs:", foodLogs);
+    
+    const foodLogsForDay = foodLogs.filter(log => log.timestamp >= startOfDay && log.timestamp < endOfDay);
+            
+    console.log("Food Logs for day:", foodLogsForDay);
+
+    if (foodLogsForDay.length === 0) {
+        foodLogsContainer.textContent = "No food logs for this day.";
+        return;
+    }
+
+    foodLogsForDay.forEach(log => {
+        const div = document.createElement("div");
+        div.classList.add("food-log-block");
+
+        const time = log.timestamp.toLocaleTimeString([], {
+            hour: "numeric",
+            minute: "2-digit"
+        });
+
+        div.innerHTML = `
+            <strong>${time}</strong>: ${log.foodName}
+        `;
+
+        foodLogsContainer.appendChild(div);
+    });
+}
+
 function showNotesForDate(date) {
-    console.log("🧭 showNotesForDate called with:", date.toISOString());
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
 
@@ -167,6 +202,7 @@ function showNotesForDate(date) {
 
 function updateChartForDate(date) {
     showNotesForDate(date);
+    showFoodLogsForDate(date);
     
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);

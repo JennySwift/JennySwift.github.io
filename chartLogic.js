@@ -66,13 +66,12 @@ document.addEventListener("DOMContentLoaded", () => {
         attachChartMousemoveSync(bgChart, "bgChart");
         attachChartMousemoveSync(foodChart, "foodChart");
         
-        //    Hide the vertical line when mouse leaves chart
-        document.getElementById("bgChart").addEventListener("mouseleave", () => {
-            bgChart.options.plugins.annotation.annotations.dynamicLine.value = null;
-            bgChart.update("none");
-        });
+        
+        attachChartMouseleaveClear();
         
     });
+    
+    
     
     selectedDateInput.addEventListener("change", () => {
         const selected = selectedDateInput.valueAsDate;
@@ -112,6 +111,23 @@ document.addEventListener("DOMContentLoaded", () => {
     
 
 });
+
+//    Hide the vertical line when mouse leaves chart
+function attachChartMouseleaveClear() {
+    ["bgChart", "foodChart"].forEach((chartId) => {
+        const el = document.getElementById(chartId);
+        el.addEventListener("mouseleave", () => {
+            if (bgChart) {
+                bgChart.options.plugins.annotation.annotations.dynamicLine.value = null;
+                bgChart.update("none");
+            }
+            if (foodChart) {
+                foodChart.options.plugins.annotation.annotations.dynamicLine.value = null;
+                foodChart.update("none");
+            }
+        });
+    });
+}
 
 function attachChartMousemoveSync(chartInstance, chartElementId) {
     const el = document.getElementById(chartElementId);

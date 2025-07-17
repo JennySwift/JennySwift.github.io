@@ -48,11 +48,13 @@ document.addEventListener("DOMContentLoaded", () => {
         
         chart = createChart(ctx);
         updateChartForDate(today);
+//        showNotesForDate(today);
     });
     
     selectedDateInput.addEventListener("change", () => {
         const selected = selectedDateInput.valueAsDate;
         updateChartForDate(selected);
+//        showNotesForDate(selected);
     });
     
     // Hide tooltip + vertical line when tapping outside chart on iPhone
@@ -121,7 +123,51 @@ function updateAnnotationZonesFromYMax(yMax) {
     annotations.veryHighZone.yMax = yMax;
 }
 
+function showNotesForDate(date) {
+    console.log("🧭 showNotesForDate called with:", date.toISOString());
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(startOfDay);
+    endOfDay.setDate(endOfDay.getDate() + 1);
+
+    const notesContainer = document.getElementById("notesContainer");
+    notesContainer.innerHTML = ""; // clear old notes
+
+    console.log("Notes:", notes);
+    
+    const notesForDay = notes.filter(note => note.timestamp >= startOfDay && note.timestamp < endOfDay);
+            
+    console.log("Notes for day:", notesForDay);
+
+    if (notesForDay.length === 0) {
+        notesContainer.textContent = "No notes for this day.";
+        return;
+    }
+
+    notesForDay.forEach(note => {
+        const div = document.createElement("div");
+        div.classList.add("note-block");
+
+        const time = note.timestamp.toLocaleTimeString([], {
+            hour: "numeric",
+            minute: "2-digit"
+        });
+
+        const tags = note.tags?.join(" ") ?? "";
+
+        div.innerHTML = `
+            <strong>${time}</strong>: ${note.text.replace(/\n/g, "<br>")}
+            <div class="note-tags">${tags}</div>
+        `;
+
+        notesContainer.appendChild(div);
+    });
+}
+
 function updateChartForDate(date) {
+    showNotesForDate(date);
+    
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
 

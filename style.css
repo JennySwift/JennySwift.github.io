@@ -51,3 +51,18 @@ h1 {
   border: 1px solid #aaa;
   border-radius: 6px;
 }
+
+.note-block {
+  background: #f9f9f9;
+  padding: 8px 12px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border-left: 4px solid #007acc;
+  font-family: sans-serif;
+}
+
+.note-tags {
+  margin-top: 4px;
+  font-size: 0.85em;
+  color: #666;
+}

@@ -2,12 +2,18 @@
 // === Global Chart Styling Properties ===
 const chartProps = {
     lineWidth: 2,
+    pointRadius: 8,
+    pointHoverRadius: 12,
     dynamicLineColor: "rgba(100, 100, 100, 0.8)",
     annotationBorderColor: "rgba(0, 0, 0, 0.4)",
     inRangeColor: "rgba(0, 255, 0, 0.5)",
     highYellowColor: "rgba(0, 255, 0, 0.4)",
     lowColor: "rgba(255, 0, 0, 0.6)",
     veryHighColor: "rgba(255, 0, 0, 0.6)",
+    foodLogColor: "green",
+    xGridColor: "#ccc",
+    yGridColor: "#888",
+    backgroundZoneColor: "rgba(255, 0, 0, 0.4)"
 };
 
 const sharedTooltipStyle = {
@@ -132,20 +138,20 @@ function getChartData() {
         }],
     };
 }
-
 function createFoodChart(ctx) {
     return new Chart(ctx, {
         type: "scatter",
         data: {
             datasets: [{
                 label: "Food Log",
-                data: [], // we'll set this in updateFoodChartForDate
-                backgroundColor: "green",
-                borderColor: "green",
-                pointRadius: 8,
+                data: [],
+                backgroundColor: chartProps.foodLogColor,
+                borderColor: chartProps.foodLogColor,
+                pointRadius: chartProps.pointRadius,
+                pointHoverRadius: chartProps.pointHoverRadius,
                 pointStyle: "rectRot",
                 showLine: false,
-                parsing: false // allow full control over tooltip contents
+                parsing: false
             }]
         },
         options: {
@@ -160,27 +166,24 @@ function createFoodChart(ctx) {
                     min: new Date().setHours(0, 0, 0, 0),
                     max: new Date().setHours(24, 0, 0, 0),
                     ticks: {
-                        source: "auto", // Let Chart.js choose nice intervals (usually hourly)
+                        source: "auto",
                         autoSkip: false
                     },
                     grid: {
                         display: true,
-                        color: "#ccc",
-                        lineWidth: 1,
+                        color: chartProps.xGridColor,
+                        lineWidth: chartProps.lineWidth,
                         drawTicks: true,
                         drawBorder: true,
                     }
-                    
                 },
                 y: {
                     title: { display: true, text: "Net Carbs (g)" },
-                    ticks: {
-                        stepSize: 10
-                    },
+                    ticks: { stepSize: 10 },
                     grid: {
-                        display: true,        // ✅ enables horizontal lines
-                        color: "#888",
-                        lineWidth: 1.5,
+                        display: true,
+                        color: chartProps.yGridColor,
+                        lineWidth: chartProps.lineWidth,
                         drawTicks: true,
                         drawBorder: true,
                     }
@@ -201,7 +204,7 @@ function createFoodChart(ctx) {
                             xMax: null,
                             yMin: 0,
                             yMax: 100,
-                            backgroundColor: "rgba(255, 0, 0, 0.4)"
+                            backgroundColor: chartProps.backgroundZoneColor
                         }
                     }
                 }
@@ -213,14 +216,11 @@ function createFoodChart(ctx) {
 }
 
 function createBGChart(ctx) {
-    let borderWidth = 2;
-    
     return new Chart(ctx, {
         type: "line",
         data: getChartData(),
         options: {
             scales: {
-                
                 x: {
                     type: "time",
                     time: {
@@ -230,28 +230,16 @@ function createBGChart(ctx) {
                         }
                     },
                     ticks: {
-                        source: "auto", // Let Chart.js choose nice intervals (usually hourly)
+                        source: "auto",
                         autoSkip: false
                     },
                     grid: {
                         display: true,
-                        color: "#ccc",
-                        lineWidth: 1,
+                        color: chartProps.xGridColor,
+                        lineWidth: chartProps.lineWidth,
                         drawTicks: true,
                         drawBorder: true,
                     },
-                    //                    ticks: {
-                    //                        autoSkip: true,
-                    //                        maxTicksLimit: 48,
-                    //                        maxRotation: 0,
-                    //                        minRotation: 0,
-                    //                    },
-                    //                    grid: {
-                    //                        display: true,
-                    //                        drawTicks: true,
-                    //                        color: "#ccc",
-                    //                        lineWidth: 1.2,
-                    //                    },
                     title: { display: true, text: "Time" }
                 },
                 y: {
@@ -260,8 +248,8 @@ function createBGChart(ctx) {
                     title: { display: true, text: "mmol/L" },
                     grid: {
                         display: true,
-                        color: "#888",
-                        lineWidth: 1.5,
+                        color: chartProps.yGridColor,
+                        lineWidth: chartProps.lineWidth,
                         drawTicks: true,
                         drawBorder: true,
                     },
@@ -275,17 +263,16 @@ function createBGChart(ctx) {
                 legend: { display: true },
                 annotation: {
                     annotations: {
-                        ...getAnnotationZones(borderWidth),
+                        ...getAnnotationZones(chartProps.lineWidth),
                         dynamicLine: getDynamicLineAnnotation()
                     }
                 },
             },
             interaction: {
-                mode: "index", //to try to fix the lag of the vertical line
+                mode: "index",
                 intersect: false,
-                axis: "x", //to try to fix the lag of the vertical line
+                axis: "x",
             },
-            
             animation: {
                 onComplete: () => {
                     updateAnnotationZonesFromYScale();

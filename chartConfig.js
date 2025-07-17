@@ -1,7 +1,7 @@
 
 // === Global Chart Styling Properties ===
 const chartProps = {
-    lineWidth: 2,
+    lineWidth: 1,
     pointRadius: 8,
     pointHoverRadius: 12,
     dynamicLineColor: "rgba(100, 100, 100, 0.8)",

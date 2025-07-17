@@ -84,14 +84,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     
     document.getElementById("bgChart").addEventListener("mousemove", (evt) => {
+        if (!bgChart) return;
+
         const points = bgChart.getElementsAtEventForMode(evt, "nearest", { intersect: false }, false);
         if (points.length > 0) {
             const index = points[0].index;
-            const label = bgChart.data.labels[index];
+            const label = bgChart.data.datasets[0].data[index]?.x;
             bgChart.options.plugins.annotation.annotations.dynamicLine.value = label;
             bgChart.update("none");
         }
     });
+
 });
 
 
@@ -395,7 +398,9 @@ function jumpToTime() {
     
     const matchedLabel = labels[closestIndex];
     
-    bgChart.options.plugins.annotation.annotations.dynamicLine.value = matchedLabel;
+    bgChart.options.plugins.annotation.annotations.dynamicLine.value = bgChart.data.datasets[0].data[closestIndex]?.x ?? null;
+    
+//    bgChart.options.plugins.annotation.annotations.dynamicLine.value = matchedLabel;
     bgChart.setActiveElements([{ datasetIndex: 0, index: closestIndex }]);
     bgChart.tooltip.setActiveElements([{ datasetIndex: 0, index: closestIndex }], { x: 0, y: 0 });
     bgChart.update();

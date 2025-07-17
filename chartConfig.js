@@ -37,7 +37,7 @@ function getAnnotationZones(borderWidth) {
             scaleID: "x",
             borderColor: "blue",
             borderWidth: 2,
-            display: false, // ✅ prevents error instead of using value: null
+            display: ctx => ctx.chart.options.plugins.annotation.annotations.dynamicLine.value !== null,
             label: { display: false },
         },
     };

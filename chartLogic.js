@@ -37,15 +37,15 @@ document.addEventListener("DOMContentLoaded", () => {
             tags: n.tags || [],
         })) || [];
         
-//        console.log("✅ Food Logs:", foodLogs);
-//
+        //        console.log("✅ Food Logs:", foodLogs);
+        //
         const now = new Date();
         const today = new Date(now);
         today.setHours(0, 0, 0, 0);
         selectedDateInput.value = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
         .toISOString()
         .split("T")[0];
-
+        
         chart = createChart(ctx);
         updateChartForDate(today);
     });
@@ -72,10 +72,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     
     //    Hide the vertical line when mouse leaves chart
-        document.getElementById("bgChart").addEventListener("mouseleave", () => {
-            chart.options.plugins.annotation.annotations.dynamicLine.value = null;
-            chart.update("none");
-        });
+    document.getElementById("bgChart").addEventListener("mouseleave", () => {
+        chart.options.plugins.annotation.annotations.dynamicLine.value = null;
+        chart.update("none");
+    });
     
     document.getElementById("bgChart").addEventListener("mousemove", (evt) => {
         const points = chart.getElementsAtEventForMode(evt, "nearest", { intersect: false }, false);
@@ -122,108 +122,38 @@ function updateAnnotationZonesFromYMax(yMax) {
 }
 
 function updateChartForDate(date) {
-//    console.log("🛠 updateChartForDate called with:", date.toString());
-//    console.log("📅 input field currently shows:", document.getElementById("selectedDate").value);
-    
-    const start = new Date(date);
-    start.setHours(0, 0, 0, 0);
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
 
-    const end = new Date(start);
-//    const end = new Date(); // use current time instead of fixed end-of-day
-    end.setDate(end.getDate() + 1); // midnight next day
+    const endOfDay = new Date(startOfDay);
+    endOfDay.setDate(endOfDay.getDate() + 1);
 
-    chart.options.scales.x.min = start;
-    chart.options.scales.x.max = end;
-    
-    //If I want the graph to not go till the end of today
-    //    const end = new Date(start);
-    //    end.setDate(end.getDate() + 1);
-    //If I want it to go till the end of today
-    
-    
+    setChartXScales(startOfDay, endOfDay);
+
     const heading = document.getElementById("dateHeading");
-    heading.textContent = start.toLocaleDateString("en-AU", {
+    heading.textContent = startOfDay.toLocaleDateString("en-AU", {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric"
     });
-    
-    const filtered = glucoseReadings.filter(r => r.timestamp >= start && r.timestamp < end);
-//    console.log("📅 Filtering for:", start.toDateString());
-//    console.log("🔢 Found glucose readings:", filtered.length);
-    
-    const bgXYValues = filtered.map(r => ({
-        x: r.timestamp,
-        y: r.value,
-    }));
-//    
-//    logChartLabelsAndValues(labels, values);
-    
-    const glucoseValues = filtered.map(r => r.value);
-    
-    // Automatically scale y-axis to fit data
-    //Always show at least up to 10 but higher if needed
-        chart.options.scales.y.max = Math.max(10, Math.ceil(Math.max(...glucoseValues)));
-    //Always show at least down to 4 but lower if BG is lower than 4
-    chart.options.scales.y.min = Math.min(4, Math.floor(Math.min(...glucoseValues)));
-    
-//    updateAnnotationZonesFromYMax(newYMax);
-    
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    yesterday.setHours(0, 0, 0, 0);
 
-    dummyNotes = [
-        {
-            timestamp: new Date(yesterday.getTime() + 9 * 60 * 60 * 1000), // 9:00 AM
-            text: "Breakfast: oats + berries",
-            tags: ["#food"]
-        },
-        {
-            timestamp: new Date(yesterday.getTime() + 14 * 60 * 60 * 1000), // 2:00 PM
-            text: "Walked for 40 minutes",
-            tags: ["#exercise"]
-        },
-        {
-            timestamp: new Date(yesterday.getTime() + 20 * 60 * 60 * 1000), // 8:00 PM
-            text: "Felt tired, BG 3.9",
-            tags: ["#symptom", "#low"]
-        }
-    ];
-    
-    console.log("✅ Notes:", notes);
-    console.log("✅ Dummy Notes:", dummyNotes);
-    
-    dummyNotesXYPoints = dummyNotes.map(note => ({
-        x: note.timestamp,
-        y: chart.options.scales.y.min + 0.5,
-        text: note.text
-      }))
-    
-    notesXYPoints = notes.map(note => ({
-        x: note.timestamp,
-        y: chart.options.scales.y.min + 0.5,
-        text: note.text
-      }))
-    
+    const filtered = glucoseReadings.filter(r => r.timestamp >= startOfDay && r.timestamp < endOfDay);
+    const bgXYValues = filtered.map(r => ({ x: r.timestamp, y: r.value }));
+    const glucoseValues = filtered.map(r => r.value);
+
+    setChartYScales(glucoseValues);
+
     const noteDataset = {
         label: "Notes",
-        data: notesXYPoints,
-//        data: notes,
-//        .filter(n => n.timestamp >= start && n.timestamp < end)
-//        .map(note => ({
-//            x: note.timestamp,
-//            y: chart.options.scales.y.min + 0.5,
-//            text: note.text
-//        })),
+        data: getNotesXYPoints(chart.options.scales.y.min),
         backgroundColor: "blue",
         borderColor: "blue",
         pointRadius: 6,
         pointStyle: "rectRot",
         showLine: false,
     };
-        
+
     chart.data.datasets = [
         {
             label: "Blood Glucose",
@@ -234,12 +164,33 @@ function updateChartForDate(date) {
         },
         noteDataset
     ];
-    
-    
-    
-    //Specify how many time labels to show below the chart
-//    chart.options.scales.x.ticks.maxTicksLimit = 8;
+
     chart.update();
+}
+
+function setChartXScales(start, end) {
+    chart.options.scales.x.min = start;
+    chart.options.scales.x.max = end;
+    
+    chart.options.scales.x.ticks.maxTicksLimit = 12;
+}
+
+//Automatically scale y-axis to fit data
+function setChartYScales(glucoseValues) {
+    //Always show at least up to 10 but higher if needed
+    chart.options.scales.y.max = Math.max(10, Math.ceil(Math.max(...glucoseValues)));
+    //Always show at least down to 4 but lower if BG is lower than 4
+    chart.options.scales.y.min = Math.min(4, Math.floor(Math.min(...glucoseValues)));
+}
+
+     
+
+function getNotesXYPoints(yValue) {
+    return notes.map(note => ({
+        x: note.timestamp,
+        y: chart.options.scales.y.min + 0.5,
+        text: note.text
+    }));
 }
 
 function logChartLabelsAndValues(labels, values) {

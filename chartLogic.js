@@ -14,11 +14,11 @@ let notes = [];
 function updateVerticalLines(timestamp) {
     if (bgChart) {
         bgChart.options.plugins.annotation.annotations.dynamicLine.value = timestamp;
-        bgChart.update("none");
+        bgChart.update();
     }
     if (foodChart) {
         foodChart.options.plugins.annotation.annotations.dynamicLine.value = timestamp;
-        foodChart.update("none");
+        foodChart.update();
     }
 }
 

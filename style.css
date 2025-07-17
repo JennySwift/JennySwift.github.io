@@ -66,3 +66,29 @@ h1 {
   font-size: 0.85em;
   color: #666;
 }
+
+.flex-container {
+  display: flex !important;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+/*  gap: 2rem;*/
+/*  margin: 2rem auto;*/
+/*  max-width: 100%;*/
+/*  padding: 0 1rem;*/
+}
+
+.daily-column {
+/*  flex: 1 1 240px;*/
+/*  min-width: 220px;*/
+/*  max-width: 340px;*/
+}
+
+.daily-section {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+

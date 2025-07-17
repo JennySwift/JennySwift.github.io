@@ -1,41 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Jenny's BG Dashboard</title>
-      <link rel="stylesheet" href="style.css" />
-      <link rel="stylesheet" href="dateNavigation.css" />
-      <script src="chartConfig.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
-      <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0"></script>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jenny's BG Dashboard</title>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="dateNavigation.css" />
+        <script src="chartConfig.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0"></script>
     </head>
     <body>
         <h1 id="dateHeading" style="text-align: center; font-size: 1.8rem; margin-top: 2rem;"></h1>
         
         <div id="dateNavContainer">
-          <button id="prevDate">⬅️ Previous</button>
-          <input type="date" id="selectedDate" />
-          <button id="nextDate">➡️ Next</button>
+            <button id="prevDate">⬅️ Previous</button>
+            <input type="date" id="selectedDate" />
+            <button id="nextDate">➡️ Next</button>
         </div>
         
         <div>
             
             <div class="jump-container">
-              <div class="jump-inner">
-                <label for="jumpInput">Jump to Time</label>
-                <input type="text" id="jumpInput" placeholder="e.g. 2:30 PM" />
-              </div>
+                <div class="jump-inner">
+                    <label for="jumpInput">Jump to Time</label>
+                    <input type="text" id="jumpInput" placeholder="e.g. 2:30 PM" />
+                </div>
             </div>
             
             <div id="chartContainer">
-              <canvas id="bgChart"></canvas>
+                <canvas id="bgChart"></canvas>
             </div>
             
-            <h3 style="text-align: center;">📝 Notes for the Day</h3>
-            <div id="notesContainer" style="max-width: 700px; margin: 0 auto;"></div>
-            <div id="foodLogsContainer" style="max-width: 700px; margin: 0 auto;"></div>
+            
+            <div id="dailyDetails" class="flex-container">
+                <div class="daily-column">
+                    <h3>📝 Notes</h3>
+                    <div id="notesContainer" class="daily-section"></div>
+                </div>
+                <div class="daily-column">
+                    <h3>🥗 Food Logs</h3>
+                    <div id="foodLogsContainer" class="daily-section"></div>
+                </div>
+                <div class="daily-column">
+                    <h3>💉 Insulin</h3>
+                    <div id="insulinContainer" class="daily-section">Coming soon...</div>
+                </div>
+                <div class="daily-column">
+                    <h3>⛹️ Workouts</h3>
+                    <div id="workoutsContainer" class="daily-section">Coming soon...</div>
+                </div>
+            </div>
+            
         </div>
         
         

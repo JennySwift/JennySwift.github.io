@@ -166,6 +166,24 @@ function formatTime12hCompact(date) {
     }).toLowerCase().replace(' ', '');
 }
 
+function handleLogClick(timestamp) {
+    jumpToTime(new Date(timestamp));
+
+    // Highlight matching point in BG chart
+    const bgDataset = bgChart.data.datasets[0].data;
+    const bgIndex = bgDataset.findIndex(p => Math.abs(new Date(p.x) - timestamp) < 2 * 60 * 1000);
+    if (bgIndex !== -1) {
+        highlightChartPoint(bgChart, 0, bgIndex);
+    }
+
+    // Highlight matching point in Food chart
+    const foodDataset = foodChart.data.datasets[0].data;
+    const foodIndex = foodDataset.findIndex(p => Math.abs(new Date(p.x) - timestamp) < 2 * 60 * 1000);
+    if (foodIndex !== -1) {
+        highlightChartPoint(foodChart, 0, foodIndex);
+    }
+}
+
 function showFoodLogsForDate(date) {
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
@@ -203,9 +221,11 @@ function showFoodLogsForDate(date) {
         `;
         div.setAttribute("data-timestamp", log.timestamp.toISOString());
         div.style.cursor = "pointer";
+        
         div.addEventListener("click", () => {
-            jumpToTime(new Date(log.timestamp));
+            handleLogClick(new Date(log.timestamp));
         });
+
 
         foodLogsContainer.appendChild(div);
     });
@@ -396,6 +416,25 @@ function logChartLabelsAndValues(labels, values) {
     }
 }
 
+function highlightChartPoint(chart, datasetIndex, pointIndex) {
+    const dataset = chart.data.datasets[datasetIndex];
+
+    const original = dataset._originalPointRadius ?? dataset.pointRadius ?? 3;
+    if (!dataset._originalPointRadius) {
+        dataset._originalPointRadius = original;
+    }
+
+    dataset.pointRadius = (ctx) => {
+        return ctx.dataIndex === pointIndex ? 15 : original;
+    };
+
+    chart.update();
+
+    setTimeout(() => {
+        dataset.pointRadius = original;
+        chart.update();
+    }, 800);
+}
 
 function jumpToTime(inputTime) {
     let parsed;

@@ -50,22 +50,22 @@ function getChartTooltip() {
             label: (context) => {
                 const dataset = context.dataset;
                 const point = context.raw;
-
+                
                 if (point?.type === "note") {
-                        const text = point?.text ?? "(no text)";
-                        return `📝 ${text}`;
-                    }
-
-                    if (point?.type === "foodLog") {
-                        return [
-                            `🍽 ${point.foodName}`,
-                            `🔥 ${point.calories} cal`,
-                            `🍌 ${point.netCarbs}g net carbs`,
-                            `🥑 ${point.fat}g fat`
-                        ];
-                    }
-
-
+                    const text = point?.text ?? "(no text)";
+                    return `📝 ${text}`;
+                }
+                
+                if (point?.type === "foodLog") {
+                    return [
+                        `🍽 ${point.foodName}`,
+                        `🔥 ${point.calories} cal`,
+                        `🍌 ${point.netCarbs}g net carbs`,
+                        `🥑 ${point.fat}g fat`
+                    ];
+                }
+                
+                
                 // Default for BG readings
                 const mmol = context.parsed.y;
                 const mgdl = Math.round(mmol * 18);
@@ -126,12 +126,34 @@ function createFoodChart(ctx) {
                         unit: "hour",
                         displayFormats: { hour: "h:mm a" }
                     },
-                    title: { display: true, text: "Time of Day" },
+                    title: { display: true, text: "Time" },
                     min: new Date().setHours(0, 0, 0, 0),
-                    max: new Date().setHours(24, 0, 0, 0)
+                    max: new Date().setHours(24, 0, 0, 0),
+                    ticks: {
+                        source: "auto", // Let Chart.js choose nice intervals (usually hourly)
+                        autoSkip: false
+                      },
+                      grid: {
+                        display: true,
+                        color: "#ccc",
+                        lineWidth: 1,
+                        drawTicks: true,
+                        drawBorder: true,
+                      }
+
                 },
                 y: {
-                    title: { display: true, text: "Net Carbs (g)" }
+                    title: { display: true, text: "Net Carbs (g)" },
+                    ticks: {
+                        stepSize: 10
+                    },
+                    grid: {
+                        display: true,        // ✅ enables horizontal lines
+                        color: "#888",
+                        lineWidth: 1.5,
+                        drawTicks: true,
+                        drawBorder: true,
+                    }
                 }
             },
             plugins: {
@@ -148,7 +170,19 @@ function createFoodChart(ctx) {
                         }
                     }
                 },
-                legend: { display: false }
+                legend: { display: false },
+                annotation: {
+                  annotations: {
+                    backgroundZone: {
+                      type: "box",
+                      xMin: null, // entire x-range
+                      xMax: null,
+                      yMin: 0,
+                      yMax: 100,
+                        backgroundColor: "rgba(255, 0, 0, 0.4)"
+                    }
+                  }
+                }
             },
             responsive: true,
             maintainAspectRatio: false
@@ -158,7 +192,7 @@ function createFoodChart(ctx) {
 
 function createBGChart(ctx) {
     let borderWidth = 2;
-
+    
     return new Chart(ctx, {
         type: "line",
         data: getChartData(),
@@ -173,18 +207,29 @@ function createBGChart(ctx) {
                             hour: "h:mm a"
                         }
                     },
-//                    ticks: {
-//                        autoSkip: true,
-//                        maxTicksLimit: 48,
-//                        maxRotation: 0,
-//                        minRotation: 0,
-//                    },
-//                    grid: {
-//                        display: true,
-//                        drawTicks: true,
-//                        color: "#ccc",
-//                        lineWidth: 1.2,
-//                    },
+                    ticks: {
+                        source: "auto", // Let Chart.js choose nice intervals (usually hourly)
+                        autoSkip: false
+                      },
+                    grid: {
+                      display: true,
+                      color: "#ccc",
+                      lineWidth: 1,
+                      drawTicks: true,
+                      drawBorder: true,
+                    },
+                    //                    ticks: {
+                    //                        autoSkip: true,
+                    //                        maxTicksLimit: 48,
+                    //                        maxRotation: 0,
+                    //                        minRotation: 0,
+                    //                    },
+                    //                    grid: {
+                    //                        display: true,
+                    //                        drawTicks: true,
+                    //                        color: "#ccc",
+                    //                        lineWidth: 1.2,
+                    //                    },
                     title: { display: true, text: "Time" }
                 },
                 y: {

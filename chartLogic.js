@@ -38,8 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })) || [];
         
 //        console.log("✅ Food Logs:", foodLogs);
-//        console.log("✅ Notes:", notes);
-//        
+//
         const now = new Date();
         const today = new Date(now);
         today.setHours(0, 0, 0, 0);
@@ -185,14 +184,25 @@ function updateChartForDate(date) {
         }
     ];
     
+    console.log("✅ Notes:", notes);
+    console.log("✅ Dummy Notes:", dummyNotes);
+    
+    dummyNotesXYPoints = dummyNotes.map(note => ({
+        x: note.timestamp,
+        y: chart.options.scales.y.min + 0.5,
+        text: note.text
+      }))
+    
+    notesXYPoints = notes.map(note => ({
+        x: note.timestamp,
+        y: chart.options.scales.y.min + 0.5,
+        text: note.text
+      }))
+    
     const noteDataset = {
         label: "Notes",
-        data: dummyNotes.map(note => ({
-            x: note.timestamp,
-            y: chart.options.scales.y.min + 0.5,
-            text: note.text
-          })),
-//        data: notes
+        data: notesXYPoints,
+//        data: notes,
 //        .filter(n => n.timestamp >= start && n.timestamp < end)
 //        .map(note => ({
 //            x: note.timestamp,

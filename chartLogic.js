@@ -433,6 +433,7 @@ function jumpToTime() {
     bgChart.tooltip.setActiveElements([{ datasetIndex: 0, index: closestIndex }], { x: 0, y: 0 });
     bgChart.update();
 
+    updateVerticalLines(bgChart.data.datasets[0].data[closestIndex]?.x ?? null);
 //    bgChart.options.plugins.annotation.annotations.dynamicLine.value = matchedLabel;
 //    bgChart.setActiveElements([{ datasetIndex: 0, index: closestIndex }]);
 //    bgChart.tooltip.setActiveElements([{ datasetIndex: 0, index: closestIndex }], { x: 0, y: 0 });

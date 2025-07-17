@@ -296,6 +296,8 @@ function showFoodLogsForDate(date) {
     });
 }
 
+
+
 function showBolusesForDate(date) {
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
@@ -306,12 +308,19 @@ function showBolusesForDate(date) {
     const container = document.getElementById("bolusContainer");
     container.innerHTML = "";
 
+    const summary = document.getElementById("bolusSummary");
     const bolusesForDay = bolusDoses.filter(b => b.timestamp >= startOfDay && b.timestamp < endOfDay);
-
+    
+    const totalUnits = bolusesForDay.reduce((sum, b) => sum + (b.amount || 0), 0);
+    summary.textContent = `💉 Total Bolus: ${totalUnits.toFixed(2)}U`;
+    
     if (bolusesForDay.length === 0) {
+        summary.textContent = "💉 Total Bolus: 0U";
         container.textContent = "No bolus doses for this day.";
         return;
     }
+
+    
 
     bolusesForDay.forEach(bolus => {
         const div = document.createElement("div");

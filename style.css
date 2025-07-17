@@ -137,6 +137,13 @@ canvas {
     border-radius: 4px;
 }
 
+.data-summary {
+    font-size: 1.1rem;
+    margin: 10px 0 6px;
+    font-weight: bold;
+    color: #1565c0;
+}
+
 .help-tip {
   display: inline-flex;
   align-items: center;

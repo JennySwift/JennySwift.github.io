@@ -475,11 +475,11 @@ function updateChartForDate(date) {
             type: "bolus"
         })),
         type: "bar",
-        backgroundColor: "#1976d2",  // a clear blue
-        borderColor: "#004ba0",
-        borderWidth: 1,
-        barPercentage: 1.0,
-        categoryPercentage: 1.0
+        backgroundColor: "#1976d2",
+          borderColor: "black",
+          borderWidth: 2,
+          barThickness: 10,
+          maxBarThickness: 24,
     };
     
 //    const bolusDataset = {

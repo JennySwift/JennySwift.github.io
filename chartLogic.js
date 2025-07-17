@@ -381,7 +381,7 @@ function updateChartForDate(date) {
         label: "Notes",
         data: getNotesXYPoints(bgChart.options.scales.y.min),
 //        pointStyle: noteIcon,
-        pointRadius: 0,
+        pointRadius: 10,
         showLine: false,
         backgroundColor: "transparent", // optional if your icon has transparency
         borderColor: "transparent"      // same here
@@ -397,8 +397,8 @@ function updateChartForDate(date) {
     };
 
     bgChart.data.datasets = [
-        glucoseDataset,
-        noteDataset
+        noteDataset,
+        glucoseDataset
     ];
 
     bgChart.update();

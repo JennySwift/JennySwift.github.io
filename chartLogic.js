@@ -10,6 +10,7 @@ let foodChart;
 let glucoseReadings = [];
 let foodLogs = [];
 let notes = [];
+let bolusDoses = [];
 
 const noteIcon = new Image();
 noteIcon.src = 'icons/note-icon.png';
@@ -46,7 +47,7 @@ const drawNoteIconsPlugin = {
 Chart.register(drawNoteIconsPlugin);
 
 function updateVerticalLines(timestamp) {
-    console.log("📏 Setting dynamicLine value to:", timestamp);  // ← Add this
+//    console.log("📏 Setting dynamicLine value to:", timestamp);  // ← Add this
     if (bgChart) {
         bgChart.options.plugins.annotation.annotations.dynamicLine.value = timestamp;
         bgChart.update();
@@ -83,6 +84,11 @@ document.addEventListener("DOMContentLoaded", () => {
             timestamp: new Date(n.startTime),
             text: n.text,
             tags: n.tags || [],
+        })) || [];
+        
+        bolusDoses = data.bolusDoses?.map((d) => ({
+            timestamp: new Date(d.timestamp),
+            amount: d.amount
         })) || [];
         
         //        console.log("✅ Food Logs:", foodLogs);
@@ -371,6 +377,11 @@ function updateChartForDate(date) {
     });
 
     const filtered = glucoseReadings.filter(r => r.timestamp >= startOfDay && r.timestamp < endOfDay);
+    
+    const bolusesForDay = bolusDoses.filter(dose => dose.timestamp >= startOfDay && dose.timestamp < endOfDay);
+    
+    
+    
     const bgXYValues = filtered.map(r => ({ x: r.timestamp, y: r.value }));
     const glucoseValues = filtered.map(r => r.value);
 
@@ -396,14 +407,87 @@ function updateChartForDate(date) {
         borderColor: "red",
         tension: 0.1
     };
+    
+    const bolusDataset = {
+        label: "Bolus",
+        data: bolusesForDay.map(dose => ({
+            x: dose.timestamp,
+            y: 8,
+            amount: dose.amount,
+            notes: dose.notes,
+            source: dose.source,
+//            y: dose.amount,
+            type: "bolus"
+        })),
+        pointRadius: 7,
+        pointHoverRadius: 10,
+        backgroundColor: "#2196f3",
+        borderColor: "#1565c0",
+        borderWidth: 2,
+        showLine: false
+    };
+    
+//    const bolusDataset = {
+//        label: "Bolus",
+//        data: getBolusXYPoints(),
+//        backgroundColor: "#7f00ff",
+//        borderColor: "#4b0082",
+//        pointRadius: 7,
+//        pointHoverRadius: 10,
+//        showLine: false,
+//        parsing: false
+//    };
 
     bgChart.data.datasets = [
         glucoseDataset,
-        noteDataset
+        noteDataset,
+        bolusDataset
     ];
 
     bgChart.update();
     updateFoodChartForDate(date);
+    
+    
+    
+    
+    
+    
+    console.log("💉 Bolus doses for day:", bolusesForDay.map(dose => ({
+        time: dose.timestamp.toLocaleTimeString(),
+        amount: dose.amount
+    })));
+    
+    //debug
+    if (bolusDataset) {
+        console.log("📊 Bolus dataset being graphed:", bolusDataset.data.map(d => ({
+            time: new Date(d.x).toLocaleTimeString(),
+            amount: d.y
+        })));
+    } else {
+        console.warn("⚠️ No Bolus dataset found in chart");
+    }
+}
+
+function getBolusXYPoints() {
+    return bolusDoses.map((dose) => {
+        const closestReading = glucoseReadings.reduce((closest, current) => {
+            const currentTime = new Date(current.timestamp);
+            const diff = Math.abs(currentTime - dose.timestamp);
+            const closestDiff = Math.abs(new Date(closest.timestamp) - dose.timestamp);
+            return diff < closestDiff ? current : closest;
+        }, glucoseReadings[0]);
+
+        const safeOffset = 3;
+        const bgY = closestReading?.value ?? 6;
+        const dotY = bgY >= 6 ? bgY + safeOffset : bgY - safeOffset;
+
+        return {
+            x: dose.timestamp,
+            y: dotY,
+            type: "bolus",
+            amount: dose.amount
+        };
+    });
 }
 
 function setChartXScales(start, end) {

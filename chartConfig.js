@@ -61,6 +61,10 @@ const tooltipCallbacks = {
             ];
         }
         
+        if (point?.type === "bolus") {
+            return `💉 ${point.amount.toFixed(2)}U bolus`;
+        }
+        
         
         // Default for BG readings
         const mmol = context.parsed.y;

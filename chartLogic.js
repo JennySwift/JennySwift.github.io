@@ -334,20 +334,6 @@ function updateChartForDate(date) {
         showLine: false,
     };
     
-    const foodLogDataset = {
-        label: "Food Logs",
-        type: "scatter",
-        data: getFoodLogXYPoints(bgChart.options.scales.y.min),
-        backgroundColor: "green",
-        borderColor: "green",
-        pointRadius: 10,
-        pointHoverRadius: 12,
-        pointStyle: "rectRot",
-        showLine: false,
-        hoverRadius: 12,
-            hitRadius: 12,
-    };
-    
     const glucoseDataset = {
         label: "BG",
         data: bgXYValues,
@@ -359,8 +345,7 @@ function updateChartForDate(date) {
 
     bgChart.data.datasets = [
         glucoseDataset,
-        noteDataset,
-        foodLogDataset
+        noteDataset
     ];
 
     bgChart.update();
@@ -386,18 +371,6 @@ function setChartYScales(glucoseValues) {
 function setFoodChartYScales(netCarbValues) {
     foodChart.options.scales.y.min = 0;
     foodChart.options.scales.y.max = Math.max(40, Math.ceil(Math.max(...netCarbValues)));
-}
-
-function getFoodLogXYPoints(yValue) {
-    return foodLogs.map(log => ({
-        x: log.timestamp,
-        y: log.netCarbs,
-        foodName: log.foodName,
-        netCarbs: log.netCarbs,
-        calories: log.calories,
-        fat: log.fat,
-        type: "foodLog"
-    }));
 }
 
 function getNotesXYPoints(yValue) {

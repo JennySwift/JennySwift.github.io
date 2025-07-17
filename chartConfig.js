@@ -1,4 +1,15 @@
 
+// === Global Chart Styling Properties ===
+const chartProps = {
+    lineWidth: 2,
+    dynamicLineColor: "rgba(100, 100, 100, 0.8)",
+    annotationBorderColor: "rgba(0, 0, 0, 0.4)",
+    inRangeColor: "rgba(0, 255, 0, 0.5)",
+    highYellowColor: "rgba(0, 255, 0, 0.4)",
+    lowColor: "rgba(255, 0, 0, 0.6)",
+    veryHighColor: "rgba(255, 0, 0, 0.6)",
+};
+
 const sharedTooltipStyle = {
     titleFont: { size: 18 },
     bodyFont: { size: 18 },
@@ -55,63 +66,57 @@ const tooltipCallbacks = {
     }
 };
 
+
 function getDynamicLineAnnotation() {
     return {
         type: "line",
         scaleID: "x",
-        borderColor: "blue",
-        borderWidth: 2,
+        borderColor: chartProps.dynamicLineColor,
+        borderWidth: chartProps.lineWidth,
         display: ctx => ctx.chart.options.plugins.annotation.annotations.dynamicLine.value !== null,
         label: { display: false },
     };
 }
 
-
-
-function getAnnotationZones(borderWidth) {
+function getAnnotationZones() {
     return {
         lowZone: {
             type: "box",
             yMin: 0,
             yMax: 4,
-            backgroundColor: "rgba(255, 0, 0, 0.6)",
-            borderWidth,
-            borderColor: "rgba(0,0,0,0.4)",
+            backgroundColor: chartProps.lowColor,
+            borderWidth: chartProps.lineWidth,
+            borderColor: chartProps.annotationBorderColor,
         },
         inRangeZone: {
             type: "box",
             yMin: 4,
             yMax: 8,
-            backgroundColor: "rgba(0, 255, 0, 0.5)",
-            borderWidth,
-            borderColor: "rgba(0,0,0,0.4)",
+            backgroundColor: chartProps.inRangeColor,
+            borderWidth: chartProps.lineWidth,
+            borderColor: chartProps.annotationBorderColor,
         },
         highYellowZone: {
             type: "box",
             yMin: 8,
             yMax: 10,
-            backgroundColor: "rgba(0, 255, 0, 0.4)",
-            borderWidth,
-            borderColor: "rgba(0,0,0,0.4)",
+            backgroundColor: chartProps.highYellowColor,
+            borderWidth: chartProps.lineWidth,
+            borderColor: chartProps.annotationBorderColor,
         },
         veryHighZone: {
             type: "box",
             yMin: 10,
             yMax: 20,
-            backgroundColor: "rgba(255, 0, 0, 0.6)",
-            borderWidth,
-            borderColor: "rgba(0,0,0,0.4)",
+            backgroundColor: chartProps.veryHighColor,
+            borderWidth: chartProps.lineWidth,
+            borderColor: chartProps.annotationBorderColor,
         },
-        dynamicLine: {
-            type: "line",
-            scaleID: "x",
-            borderColor: "blue",
-            borderWidth: 2,
-            display: ctx => ctx.chart.options.plugins.annotation.annotations.dynamicLine.value !== null,
-            label: { display: false },
-        },
+        dynamicLine: getDynamicLineAnnotation(),
     };
 }
+
+
 
 function getChartData() {
     return {

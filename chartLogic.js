@@ -236,21 +236,24 @@ function updateChartForDate(date) {
     const noteDataset = {
         label: "Notes",
         data: getNotesXYPoints(chart.options.scales.y.min),
-        backgroundColor: "blue",
-        borderColor: "blue",
-        pointRadius: 6,
+        backgroundColor: "yellow",
+        borderColor: "yellow",
+        pointRadius: 10,
         pointStyle: "rectRot",
         showLine: false,
     };
+    
+    const glucoseDataset = {
+        label: "BG",
+        data: bgXYValues,
+        pointRadius: 0,
+        fill: false,
+        borderColor: "red",
+        tension: 0.1
+    };
 
     chart.data.datasets = [
-        {
-            label: "Blood Glucose",
-            data: bgXYValues,
-            fill: false,
-            borderColor: "red",
-            tension: 0.1
-        },
+        glucoseDataset,
         noteDataset
     ];
 

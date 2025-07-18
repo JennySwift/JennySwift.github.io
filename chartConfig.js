@@ -13,7 +13,32 @@ const chartProps = {
     foodLogColor: "green",
     xGridColor: "#ccc",
     yGridColor: "#888",
-    backgroundZoneColor: "rgba(255, 0, 0, 0.4)"
+    backgroundZoneColor: "rgba(255, 0, 0, 0.4)",
+    basalBackgroundZoneColor: "rgba(0, 255, 0, 0.4)",
+    foodBackgroundColor: "#ffa726",
+    foodBorderColor: "#ef6c00"
+};
+
+const reusableXTicks = {
+    source: "auto",
+    autoSkip: false,
+    maxTicksLimit: 12
+};
+
+const reusableXGrid = {
+    display: true,
+    color: chartProps.xGridColor,
+    lineWidth: chartProps.lineWidth,
+    drawTicks: true,
+    drawBorder: true
+};
+
+const reusableYGrid = {
+    display: true,
+    color: chartProps.yGridColor,
+    lineWidth: chartProps.lineWidth,
+    drawTicks: true,
+    drawBorder: true
 };
 
 const sharedTooltipStyle = {
@@ -80,9 +105,9 @@ const tooltipCallbacks = {
         if (point?.type === "bolus") {
             return `💉 ${point.y.toFixed(2)}U bolus`;
         }
-//        if (point?.type === "bolus") {
-//            return `💉 ${point.amount.toFixed(2)}U bolus`;
-//        }
+        //        if (point?.type === "bolus") {
+        //            return `💉 ${point.amount.toFixed(2)}U bolus`;
+        //        }
         
         
         // Default for BG readings
@@ -168,15 +193,13 @@ function createFoodChart(ctx) {
             datasets: [{
                 label: "Food Log",
                 data: [],
-                backgroundColor: chartProps.foodLogColor,
-                borderColor: chartProps.foodLogColor,
                 pointRadius: chartProps.pointRadius,
                 pointHoverRadius: chartProps.pointHoverRadius,
                 pointStyle: "circle",
                 pointRadius: 6,
                 pointHoverRadius: 10,
-                backgroundColor: "#ffa726",     // orange fill
-                borderColor: "#ef6c00",         // darker orange border
+                backgroundColor: chartProps.foodBackgroundColor,
+                borderColor: chartProps.foodBorderColor,
                 borderWidth: 2,
                 showLine: false,
                 parsing: false
@@ -193,28 +216,13 @@ function createFoodChart(ctx) {
                     title: { display: true, text: "Time" },
                     min: new Date().setHours(0, 0, 0, 0),
                     max: new Date().setHours(24, 0, 0, 0),
-                    ticks: {
-                        source: "auto",
-                        autoSkip: false
-                    },
-                    grid: {
-                        display: true,
-                        color: chartProps.xGridColor,
-                        lineWidth: chartProps.lineWidth,
-                        drawTicks: true,
-                        drawBorder: true,
-                    }
+                    ticks: reusableXTicks,
+                    grid: reusableXGrid
                 },
                 y: {
                     title: { display: true, text: "Net Carbs (g)" },
                     ticks: { stepSize: 10 },
-                    grid: {
-                        display: true,
-                        color: chartProps.yGridColor,
-                        lineWidth: chartProps.lineWidth,
-                        drawTicks: true,
-                        drawBorder: true,
-                    }
+                    grid: reusableYGrid
                 }
             },
             plugins: {
@@ -237,8 +245,8 @@ function createFoodChart(ctx) {
                     }
                 },
                 datalabels: {
-                        display: false
-                    }
+                    display: false
+                }
             },
             responsive: true,
             maintainAspectRatio: false
@@ -253,23 +261,26 @@ function createBasalChart(ctx) {
             datasets: [{
                 label: "Basal Rate (U/hr)",
                 data: [], // will be populated in updateChartForDate
-                borderColor: "#4caf50",
-                backgroundColor: "rgba(76, 175, 80, 0.2)",
-                borderWidth: 2,
+//                borderColor: "rgba(76, 175, 80, 0.6)",
+//                backgroundColor: "rgba(76, 175, 80, 0.2)",
+                borderWidth: 4,
                 stepped: "before", // 👈 this makes it a step line
                 pointRadius: 0,
-                fill: false
+                fill: true,
+//                z: 10,
+                backgroundColor: chartProps.foodBackgroundColor,
+                borderColor: chartProps.foodBorderColor,
                 
             }]
         },
         options: {
             interaction: {
-              mode: "nearest",
-              intersect: false
+                mode: "nearest",
+                intersect: false
             },
             hover: {
-              mode: "nearest",
-              intersect: false
+                mode: "nearest",
+                intersect: false
             },
             parsing: false,
             scales: {
@@ -279,23 +290,46 @@ function createBasalChart(ctx) {
                         unit: "hour",
                         tooltipFormat: "h:mm a"
                     },
-                    ticks: {
-                        maxTicksLimit: 12
-                    }
+                    min: new Date().setHours(0, 0, 0, 0),
+                    max: new Date().setHours(24, 0, 0, 0),
+                    ticks: reusableXTicks,
+                    grid: reusableXGrid
                 },
                 y: {
                     beginAtZero: true,
                     title: {
                         display: true,
                         text: "U/hr"
-                    }
+                    },
+                    grid: reusableYGrid
                 }
             },
             plugins: {
+                annotation: {
+                    annotations: {
+//                        backgroundZone: {
+//                            type: "box",
+//                            xMin: null,
+//                            xMax: null,
+//                            yMin: 0,
+//                            yMax: 100,
+//                            backgroundColor: chartProps.backgroundZoneColor
+//                        }
+                        //                        backgroundZone: {
+                        //                          type: "box",
+                        //                          xMin: "start",
+                        //                          xMax: "end",
+                        ////                          yMin: 0,
+                        ////                          yMax: 100,
+                        //                          backgroundColor: chartProps.basalBackgroundZoneColor,
+                        //                          borderWidth: 0
+                        //                        }
+                    }
+                },
                 datalabels: {
-                        display: false
-                    },
-
+                    display: false
+                },
+                
                 legend: { display: false },
                 tooltip: {
                     ...sharedTooltipStyle,
@@ -304,14 +338,14 @@ function createBasalChart(ctx) {
                             const point = context[0].raw;
                             const start = point.segmentStart ? new Date(point.segmentStart) : null;
                             const end = point.segmentEnd ? new Date(point.segmentEnd) : null;
-
+                            
                             const formatTime = (d) => d.toLocaleTimeString([], {
                                 hour: "numeric", minute: "2-digit", hour12: true
                             }).toLowerCase().replace(' ', '');
-
+                            
                             const startStr = start ? formatTime(start) : "unknown";
                             const endStr = end ? formatTime(end) : "ongoing";
-
+                            
                             return `⏱ ${startStr} to ${endStr}`;
                         },
                         label: function (context) {
@@ -324,7 +358,7 @@ function createBasalChart(ctx) {
                 
                 
                 
-               
+                
             },
             responsive: true,
             //Needed for my CSS that sets the height to work
@@ -348,10 +382,7 @@ function createBGChart(ctx) {
                             hour: "h:mm a"
                         }
                     },
-                    ticks: {
-                        source: "auto",
-                        autoSkip: false
-                    },
+                    ticks: reusableXTicks,
                     grid: {
                         display: true,
                         color: chartProps.xGridColor,
@@ -395,7 +426,7 @@ function createBGChart(ctx) {
                     }
                 },
                 drawNoteIcons: drawNoteIconsPlugin,
-            
+                
                 
                 datalabels: {
                     display: (context) => context.dataset.label === "Bolus",
@@ -407,11 +438,11 @@ function createBGChart(ctx) {
                         size: 14
                     },
                     formatter: (value, context) => value.amount?.toFixed(2).replace(/^0/, ""),  // Remove leading 0
-//                    rotation: 90,
+                    //                    rotation: 90,
                     offset: (context) => {
                         const i = context.dataIndex;
                         return (i % 2 === 0) ? 10 : 30; // stagger labels vertically so they fit
-                         
+                        
                     }
                 }
                 
@@ -443,20 +474,20 @@ function createBGChart(ctx) {
             interaction: {
                 mode: "nearest",    // Show tooltip for closest point on the x-axis
                 intersect: false,   // Don’t require the mouse to be *on* the point
-              },
-              hover: {
+            },
+            hover: {
                 mode: "nearest",
                 intersect: false
-              },
+            },
             
-//            interaction: {
-//                mode: "point",
-//                intersect: true //true: must actually hover the point/bar. false: triggers tooltip even when you’re just aligned on the x or y axis (depending on mode).
-//            },
-//            hover: {
-//                mode: "point",
-//                intersect: true
-//            },
+            //            interaction: {
+            //                mode: "point",
+            //                intersect: true //true: must actually hover the point/bar. false: triggers tooltip even when you’re just aligned on the x or y axis (depending on mode).
+            //            },
+            //            hover: {
+            //                mode: "point",
+            //                intersect: true
+            //            },
             animation: {
                 onComplete: () => {
                     updateAnnotationZonesFromYScale();

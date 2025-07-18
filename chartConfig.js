@@ -314,15 +314,22 @@ function createBGChart(ctx) {
             //
             // Tip: For line charts, make sure `pointRadius` > 0 to allow hovering.
             interaction: {
-                mode: "point",
-                //true: must actually hover the point/bar. false: triggers tooltip even when you’re just aligned on the x or y axis (depending on mode).
-
-                intersect: true
-            },
-            hover: {
-                mode: "point",
-                intersect: true
-            },
+                mode: "nearest",    // Show tooltip for closest point on the x-axis
+                intersect: false,   // Don’t require the mouse to be *on* the point
+              },
+              hover: {
+                mode: "nearest",
+                intersect: false
+              },
+            
+//            interaction: {
+//                mode: "point",
+//                intersect: true //true: must actually hover the point/bar. false: triggers tooltip even when you’re just aligned on the x or y axis (depending on mode).
+//            },
+//            hover: {
+//                mode: "point",
+//                intersect: true
+//            },
             animation: {
                 onComplete: () => {
                     updateAnnotationZonesFromYScale();

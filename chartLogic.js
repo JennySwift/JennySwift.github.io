@@ -455,10 +455,11 @@ function updateChartForDate(date) {
     const glucoseDataset = {
         label: "BG",
         data: bgXYValues,
-        pointRadius: 0,
-        fill: false,
+        pointRadius: 0,          // Hide the dots visually
+        pointHoverRadius: 8,     // Make them hoverable for tooltips
         borderColor: "red",
-        tension: 0.1
+        tension: 0.1, //controls how curved or straight the lines between points are
+        fill: false
     };
     
     

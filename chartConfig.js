@@ -299,12 +299,21 @@ function createBasalChart(ctx) {
                 legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        label: function(context) {
-                            const rate = context.raw.y;
-                            const start = new Date(context.raw.x).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-                            const end = context.raw.end ? new Date(context.raw.end).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "ongoing";
-                            return `${rate.toFixed(2)} U/hr (${start}–${end})`;
+                        label: function (context) {
+                            const rate = context.parsed.y;
+                            const start = context.raw.segmentStart ? new Date(context.raw.segmentStart) : null;
+                            const end = context.raw.segmentEnd ? new Date(context.raw.segmentEnd) : null;
+
+                            const formatTime = (d) => d.toLocaleTimeString([], {
+                                hour: "numeric", minute: "2-digit", hour12: true
+                            }).toLowerCase().replace(' ', '');
+
+                            const startStr = start ? formatTime(start) : "unknown";
+                            const endStr = end ? formatTime(end) : "ongoing";
+
+                            return `⏱ ${startStr} to ${endStr}\n💧 ${rate.toFixed(2)} U/hr`;
                         }
+                        
                     }
                 }
             },

@@ -546,8 +546,18 @@ function updateChartForDate(date) {
             if (!entry.endTime) return; // skip if no end time
 
             basalDataForDay.push(
-                { x: entry.startTime, y: entry.rate },
-                { x: entry.endTime, y: entry.rate }
+                {
+                    x: entry.startTime,
+                    y: entry.rate,
+                    segmentStart: entry.startTime,
+                    segmentEnd: entry.endTime
+                },
+                {
+                    x: entry.endTime,
+                    y: entry.rate,
+                    segmentStart: entry.startTime,
+                    segmentEnd: entry.endTime
+                }
             );
         });
     

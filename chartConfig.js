@@ -300,10 +300,10 @@ function createBasalChart(ctx) {
                 tooltip: {
                     ...sharedTooltipStyle,
                     callbacks: {
-                        label: function (context) {
-                            const rate = context.parsed.y;
-                            const start = context.raw.segmentStart ? new Date(context.raw.segmentStart) : null;
-                            const end = context.raw.segmentEnd ? new Date(context.raw.segmentEnd) : null;
+                        title: function (context) {
+                            const point = context[0].raw;
+                            const start = point.segmentStart ? new Date(point.segmentStart) : null;
+                            const end = point.segmentEnd ? new Date(point.segmentEnd) : null;
 
                             const formatTime = (d) => d.toLocaleTimeString([], {
                                 hour: "numeric", minute: "2-digit", hour12: true
@@ -312,10 +312,14 @@ function createBasalChart(ctx) {
                             const startStr = start ? formatTime(start) : "unknown";
                             const endStr = end ? formatTime(end) : "ongoing";
 
-                            return `⏱ ${startStr} to ${endStr}\n💧 ${rate.toFixed(2)} U/hr`;
+                            return `⏱ ${startStr} to ${endStr}`;
+                        },
+                        label: function (context) {
+                            const rate = context.parsed.y;
+                            return `💧 ${rate.toFixed(2)} U/hr`;
                         }
-                        
                     }
+                    
                 }
                 
                 

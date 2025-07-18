@@ -248,16 +248,18 @@ function createFoodChart(ctx) {
 
 function createBasalChart(ctx) {
     return new Chart(ctx, {
-        type: "bar",
+        type: "line",
         data: {
             datasets: [{
                 label: "Basal Rate (U/hr)",
-                data: [], // will be filled in updateChartForDate
-                backgroundColor: "#4caf50",
-                borderColor: "black",
-                borderWidth: 1,
-                barThickness: 8,
-                maxBarThickness: 20
+                data: [], // will be populated in updateChartForDate
+                borderColor: "#4caf50",
+                backgroundColor: "rgba(76, 175, 80, 0.2)",
+                borderWidth: 2,
+                stepped: "before", // 👈 this makes it a step line
+                pointRadius: 0,
+                fill: false
+                
             }]
         },
         options: {

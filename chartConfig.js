@@ -30,7 +30,15 @@ const sharedTooltipStyle = {
 };
 
 const foodChartTooltipCallbacks = {
-    label: context => {
+    title: (context) => {
+        const timestamp = context[0].parsed.x;
+        return new Date(timestamp).toLocaleTimeString([], {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true
+        }).toLowerCase();
+    },
+    label: (context) => {
         const point = context.raw;
         return [
             `🍽 ${point.foodName}`,
@@ -39,10 +47,18 @@ const foodChartTooltipCallbacks = {
             `🥑 ${point.fat}g fat`
         ];
     }
-}
+};
 
 const tooltipCallbacks = {
-    title: (context) => context[0].label,
+    //This is the heading in the tooltip
+    title: (context) => {
+        const timestamp = context[0].parsed.x;
+        return new Date(timestamp).toLocaleTimeString([], {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true
+        }).toLowerCase();
+    },
     label: (context) => {
         const dataset = context.dataset;
         const point = context.raw;

@@ -14,7 +14,7 @@ canvas {
   height: 400px;
 }
 
-#bgChartContainer {
+#bgChartContainer, #basalChartContainer {
   display: flex;
   justify-content: center;   /* Center horizontally */
   align-items: center;       /* Center vertically if needed */
@@ -30,6 +30,10 @@ canvas {
 
 #foodChart {
     height: 200px
+}
+
+#basalChart {
+    height: 100px
 }
 
 /*#foodChart {*/

@@ -297,7 +297,10 @@ function createBasalChart(ctx) {
                         }
                     }
                 }
-            }
+            },
+            responsive: true,
+            //Needed for my CSS that sets the height to work
+            maintainAspectRatio: false
         }
     });
 }

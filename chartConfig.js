@@ -298,6 +298,7 @@ function createBasalChart(ctx) {
 
                 legend: { display: false },
                 tooltip: {
+                    ...sharedTooltipStyle,
                     callbacks: {
                         label: function (context) {
                             const rate = context.parsed.y;
@@ -316,6 +317,10 @@ function createBasalChart(ctx) {
                         
                     }
                 }
+                
+                
+                
+               
             },
             responsive: true,
             //Needed for my CSS that sets the height to work

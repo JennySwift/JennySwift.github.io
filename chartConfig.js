@@ -219,7 +219,10 @@ function createFoodChart(ctx) {
                             backgroundColor: chartProps.backgroundZoneColor
                         }
                     }
-                }
+                },
+                datalabels: {
+                        display: false
+                    }
             },
             responsive: true,
             maintainAspectRatio: false
@@ -228,6 +231,7 @@ function createFoodChart(ctx) {
 }
 
 function createBGChart(ctx) {
+    Chart.register(ChartDataLabels);
     return new Chart(ctx, {
         type: "line",
         data: getChartData(),
@@ -287,7 +291,22 @@ function createBGChart(ctx) {
                         dynamicLine: getDynamicLineAnnotation()
                     }
                 },
-                drawNoteIcons: drawNoteIconsPlugin
+                drawNoteIcons: drawNoteIconsPlugin,
+                datalabels: {
+                    display: (context) => context.dataset.label === "Bolus",
+                    anchor: 'end',
+                    align: 'top',
+                    color: 'black',
+                    font: {
+                        weight: 'bold',
+                        size: 14
+                    },
+                    formatter: (value, context) => value.amount?.toFixed(2) + "U",
+                    rotation: 90,             // 👈 Slant labels
+                    offset: 6                  // 👈 Nudge upward a bit
+                }
+                
+                
             },
             //This is the most strict and precise configuration:
             //You must actually hover the point or bar.

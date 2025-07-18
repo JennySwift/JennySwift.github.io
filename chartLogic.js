@@ -482,6 +482,16 @@ function updateChartForDate(date) {
           borderWidth: 2,
           barThickness: 10,
           maxBarThickness: 24,
+        datalabels: {
+                anchor: 'end',
+                align: 'top',
+                color: 'black',
+                font: {
+                    weight: 'bold',
+                    size: 14
+                },
+            formatter: (value) => value.amount?.toFixed(2).replace(/^0/, "")
+            }
     };
     
 //    const bolusDataset = {

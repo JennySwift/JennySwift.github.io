@@ -292,6 +292,8 @@ function createBGChart(ctx) {
                     }
                 },
                 drawNoteIcons: drawNoteIconsPlugin,
+            
+                
                 datalabels: {
                     display: (context) => context.dataset.label === "Bolus",
                     anchor: 'end',
@@ -301,11 +303,14 @@ function createBGChart(ctx) {
                         weight: 'bold',
                         size: 14
                     },
-                    formatter: (value, context) => value.amount?.toFixed(2) + "U",
-                    rotation: 90,             // 👈 Slant labels
-                    offset: 6                  // 👈 Nudge upward a bit
+                    formatter: (value, context) => value.amount?.toFixed(2).replace(/^0/, ""),  // Remove leading 0
+//                    rotation: 90,
+                    offset: (context) => {
+                        const i = context.dataIndex;
+                        return (i % 2 === 0) ? 10 : 30; // stagger labels vertically so they fit
+                         
+                    }
                 }
-                
                 
             },
             //This is the most strict and precise configuration:

@@ -535,24 +535,37 @@ function updateChartForDate(date) {
     updateFoodChartForDate(date);
     
     
-    const basalDataForDay = basalEntries
+    
+    
+    
+    const basalDataForDay = [];
+
+    basalEntries
         .filter(entry => entry.startTime >= startOfDay && entry.startTime < endOfDay)
-        .map(entry => ({
-            x: entry.startTime,
-            end: entry.endTime,
-            notes: entry.notes,
-            y: entry.rate
-        }));
+        .forEach(entry => {
+            if (!entry.endTime) return; // skip if no end time
+
+            basalDataForDay.push(
+                { x: entry.startTime, y: entry.rate },
+                { x: entry.endTime, y: entry.rate }
+            );
+        });
+    
+//    const basalDataForDay = basalEntries
+//        .filter(entry => entry.startTime >= startOfDay && entry.startTime < endOfDay)
+//        .map(entry => ({
+//            x: entry.startTime,
+//            end: entry.endTime,
+//            notes: entry.notes,
+//            y: entry.rate
+//        }));
 
     basalChart.data.datasets[0].data = basalDataForDay;
     basalChart.options.scales.x.min = startOfDay;
     basalChart.options.scales.x.max = endOfDay;
     basalChart.update();
     
-    
-    
-    
-    
+
     
     console.log("💉 Bolus doses for day:", bolusesForDay.map(dose => ({
         time: dose.timestamp.toLocaleTimeString(),

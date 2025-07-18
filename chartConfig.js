@@ -246,6 +246,62 @@ function createFoodChart(ctx) {
     });
 }
 
+function createBasalChart(ctx) {
+    return new Chart(ctx, {
+        type: "bar",
+        data: {
+            datasets: [{
+                label: "Basal Rate (U/hr)",
+                data: [], // will be filled in updateChartForDate
+                backgroundColor: "#4caf50",
+                borderColor: "black",
+                borderWidth: 1,
+                barThickness: 8,
+                maxBarThickness: 20
+            }]
+        },
+        options: {
+            parsing: false,
+            scales: {
+                x: {
+                    type: "time",
+                    time: {
+                        unit: "hour",
+                        tooltipFormat: "h:mm a"
+                    },
+                    ticks: {
+                        maxTicksLimit: 12
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: "U/hr"
+                    }
+                }
+            },
+            plugins: {
+                datalabels: {
+                        display: false
+                    },
+
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const rate = context.raw.y;
+                            const start = new Date(context.raw.x).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+                            const end = context.raw.end ? new Date(context.raw.end).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "ongoing";
+                            return `${rate.toFixed(2)} U/hr (${start}–${end})`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
 function createBGChart(ctx) {
     Chart.register(ChartDataLabels);
     return new Chart(ctx, {

@@ -11,6 +11,8 @@ let glucoseReadings = [];
 let foodLogs = [];
 let notes = [];
 let bolusDoses = [];
+let basalEntries = [];
+let basalChart;
 
 const noteIcon = new Image();
 noteIcon.src = 'icons/note-icon.png';
@@ -61,6 +63,7 @@ function updateVerticalLines(timestamp) {
 document.addEventListener("DOMContentLoaded", () => {
     const ctx = document.getElementById("bgChart").getContext("2d");
     const foodCtx = document.getElementById("foodChart").getContext("2d");
+    const basalCtx = document.getElementById("basalChart").getContext("2d");
     const selectedDateInput = document.getElementById("selectedDate");
     
     fetch("https://dl.dropboxusercontent.com/scl/fi/0udoq3x6gkchstkq2hqxg/glucoseData.json?rlkey=vllvwb6wlx2el12c9aqijw37p")
@@ -86,6 +89,14 @@ document.addEventListener("DOMContentLoaded", () => {
             tags: n.tags || [],
         })) || [];
         
+        basalEntries = data.basalEntries?.map(b => ({
+            startTime: new Date(b.startTime),
+            endTime: b.endTime ? new Date(b.endTime) : null,
+            rate: b.rate,
+            mode: b.mode,
+            notes: b.notes
+        })) || [];
+        
         bolusDoses = data.bolusDoses?.map((b) => ({
             timestamp: new Date(b.timestamp),
             amount: b.amount,
@@ -108,6 +119,8 @@ document.addEventListener("DOMContentLoaded", () => {
         
         bgChart = createBGChart(ctx);
         foodChart = createFoodChart(foodCtx);
+        basalChart = createBasalChart(basalCtx);
+        
         updateChartForDate(today);
         
         attachChartMousemoveSync(bgChart, "bgChart");
@@ -520,6 +533,21 @@ function updateChartForDate(date) {
     
     bgChart.update();
     updateFoodChartForDate(date);
+    
+    
+    const basalDataForDay = basalEntries
+        .filter(entry => entry.startTime >= startOfDay && entry.startTime < endOfDay)
+        .map(entry => ({
+            x: entry.startTime,
+            end: entry.endTime,
+            notes: entry.notes,
+            y: entry.rate
+        }));
+
+    basalChart.data.datasets[0].data = basalDataForDay;
+    basalChart.options.scales.x.min = startOfDay;
+    basalChart.options.scales.x.max = endOfDay;
+    basalChart.update();
     
     
     

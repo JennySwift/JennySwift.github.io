@@ -263,6 +263,14 @@ function createBasalChart(ctx) {
             }]
         },
         options: {
+            interaction: {
+              mode: "nearest",
+              intersect: false
+            },
+            hover: {
+              mode: "nearest",
+              intersect: false
+            },
             parsing: false,
             scales: {
                 x: {

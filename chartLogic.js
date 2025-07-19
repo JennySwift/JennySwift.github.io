@@ -534,32 +534,68 @@ function updateChartForDate(date) {
     bgChart.update();
     updateFoodChartForDate(date);
     
-    
-    
-    
-    
     const basalDataForDay = [];
+    const dayEntries = basalEntries
+        .filter(entry =>
+            (entry.startTime >= startOfDay && entry.startTime < endOfDay) ||
+            (entry.endTime && entry.endTime > startOfDay && entry.endTime <= endOfDay)
+        )
+        .sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
 
-    basalEntries
-        .filter(entry => entry.startTime >= startOfDay && entry.startTime < endOfDay)
-        .forEach(entry => {
-            if (!entry.endTime) return; // skip if no end time
+    let lastEnd = startOfDay;
 
+    for (const entry of dayEntries) {
+        if (!entry.endTime) continue;
+
+        // If there is a gap between lastEnd and this entry's start, fill with zero
+        if (entry.startTime > lastEnd) {
             basalDataForDay.push(
-                {
-                    x: entry.startTime,
-                    y: entry.rate,
-                    segmentStart: entry.startTime,
-                    segmentEnd: entry.endTime
-                },
-                {
-                    x: entry.endTime,
-                    y: entry.rate,
-                    segmentStart: entry.startTime,
-                    segmentEnd: entry.endTime
-                }
+                { x: lastEnd, y: 0 },
+                { x: entry.startTime, y: 0 }
             );
-        });
+        }
+
+        // Push the actual segment
+        basalDataForDay.push(
+            { x: entry.startTime, y: entry.rate, segmentStart: entry.startTime, segmentEnd: entry.endTime },
+            { x: entry.endTime, y: entry.rate, segmentStart: entry.startTime, segmentEnd: entry.endTime }
+        );
+
+        lastEnd = entry.endTime;
+    }
+
+    // Fill to end of day if needed
+    if (lastEnd < endOfDay) {
+        basalDataForDay.push(
+            { x: lastEnd, y: 0 },
+            { x: endOfDay, y: 0 }
+        );
+    }
+    
+    
+    //This worked for manual entries but not for tidepool entries
+//    const basalDataForDay = [];
+//
+//    basalEntries
+//        .filter(entry => entry.startTime >= startOfDay && entry.startTime < endOfDay)
+//        .forEach(entry => {
+//            if (!entry.endTime) return; // skip if no end time
+//
+//            basalDataForDay.push(
+//                {
+//                    x: entry.startTime,
+//                    y: entry.rate,
+//                    segmentStart: entry.startTime,
+//                    segmentEnd: entry.endTime
+//                },
+//                {
+//                    x: entry.endTime,
+//                    y: entry.rate,
+//                    segmentStart: entry.startTime,
+//                    segmentEnd: entry.endTime
+//                }
+//            );
+//        });
     
 //    const basalDataForDay = basalEntries
 //        .filter(entry => entry.startTime >= startOfDay && entry.startTime < endOfDay)

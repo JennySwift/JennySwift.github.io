@@ -12,6 +12,7 @@ let foodLogs = [];
 let notes = [];
 let bolusDoses = [];
 let basalEntries = [];
+let workouts = [];
 let basalChart;
 
 const noteIcon = new Image();
@@ -87,6 +88,22 @@ document.addEventListener("DOMContentLoaded", () => {
             timestamp: new Date(n.startTime),
             text: n.text,
             tags: n.tags || [],
+        })) || [];
+        
+        workouts = data.workouts?.map((w) => ({
+            start: new Date(w.startTime),
+            name: w.name,
+            type: w.type,
+            duration: w.duration,
+            distance: w.distance,
+            activeCalories: w.activeCalories,
+            maxHeartRate: w.maxHeartRate,
+            endTime: w.endTime,
+            source: w.source,
+            elapsedTime: w.elapsedTime,
+            averageHeartRate: w.averageHeartRate,
+            notes: w.notes,
+            tags: w.tags || []
         })) || [];
         
         basalEntries = data.basalEntries?.map(b => ({
@@ -309,7 +326,43 @@ function showFoodLogsForDate(date) {
     });
 }
 
+function showWorkoutsForDate(date) {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
 
+    const endOfDay = new Date(startOfDay);
+    endOfDay.setDate(endOfDay.getDate() + 1);
+
+    const container = document.getElementById("workoutsContainer");
+    container.innerHTML = "";
+
+    const workoutsForDay = workouts.filter(w => w.start >= startOfDay && w.start < endOfDay);
+    
+    console.log("workouts:", workouts);
+    console.log("workouts for day:", workoutsForDay);
+        
+    if (workoutsForDay.length === 0) {
+        container.textContent = "No workouts for this day.";
+        return;
+    }
+
+    workoutsForDay.forEach(workout => {
+        const div = document.createElement("div");
+        div.classList.add("workout-block");
+
+        const time = formatTime12hCompact(workout.start);
+        const type = workout.type;
+
+        let extra = "";
+        
+        if (workout.name) {
+            extra += ` · ${workout.name}`;
+        }
+
+        div.innerHTML = `<strong>${type}</strong>: 💉 ${extra}`;
+        container.appendChild(div);
+    });
+}
 
 function showBolusesForDate(date) {
     const startOfDay = new Date(date);
@@ -425,6 +478,7 @@ function updateChartForDate(date) {
     showNotesForDate(date);
     showFoodLogsForDate(date);
     showBolusesForDate(date);
+    showWorkoutsForDate(date);
     
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
